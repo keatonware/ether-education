@@ -119,8 +119,52 @@ a.lrow:hover .t{color:var(--steel-text)}
 .lrow .m{font-size:14px;color:var(--ink-2);white-space:nowrap}
 .lrow .s{grid-column:1/-1;font-size:13px;color:var(--ink-2)}
 .lrow.done .t{color:var(--ink-2)}
-.lrow.gap .s{color:var(--amber)}
-.lrow .ready{color:var(--steel-text)}
+.lrow .s.ready{color:var(--steel-text)}
+
+/* Lessons: four domains */
+.big4{gap:40px}
+.bigdom{display:flex;flex-direction:column;min-width:0;text-decoration:none;color:inherit;border-top:1px solid var(--rule);padding-top:22px}
+.bigdom .rn{font-family:var(--display);font-size:112px;line-height:.9;color:rgba(255,255,255,0.92);transition:color .15s ease}
+.bigdom:hover .rn{color:var(--steel-text)}
+.bigdom h2{margin:18px 0 18px;font-size:20px;font-weight:400;line-height:1.3;min-height:78px}
+.bigdom .acc{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
+.bigdom .score,.dhead .score{font-family:var(--display);font-size:44px;line-height:1}
+.weak .score{color:var(--amber)}
+.bigdom .meta,.dhead .meta{font-size:13px;color:var(--ink-2)}
+.bigdom .stats{display:flex;gap:16px;flex-wrap:wrap;padding:16px 0;font-size:14px;color:var(--ink-2);border-bottom:1px solid var(--rule)}
+.bigdom .stats b{font-weight:500;color:#fff}
+.amber,.bigdom .stats .amber b{color:var(--amber)}
+.subs{list-style:none;margin:0;padding:6px 0 0}
+.subs li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;padding:7px 0;font-size:14px;line-height:1.4;color:rgba(255,255,255,0.88)}
+.subs .sl,.subdom .sl{font-family:var(--display);color:var(--steel)}
+.subs .sc{color:var(--ink-2);font-variant-numeric:tabular-nums}
+.bigdom .open{margin-top:18px;font-size:15px;color:var(--link);text-decoration:underline;text-underline-offset:3px}
+.bigdom:hover .open{color:#fff}
+
+/* Lessons: one domain */
+.domain-view{grid-template-columns:minmax(0,1fr);gap:36px}
+.domain-view .crumb{margin-bottom:-12px}
+.dhead{display:grid;grid-template-columns:auto minmax(0,1fr) 220px;gap:32px;align-items:end;padding-bottom:26px;border-bottom:1px solid var(--rule)}
+.dhead .rn{font-family:var(--display);font-size:120px;line-height:.85}
+.dhead h1{margin:0 0 10px;font-family:var(--display);font-size:34px;font-weight:400;letter-spacing:0.02em;line-height:1.2}
+.dhead p{margin:0;font-size:15px;color:var(--ink-2);line-height:1.5;max-width:640px}
+.dhead .acc{display:grid;grid-template-columns:auto 1fr;align-items:baseline;gap:6px 12px}
+.dhead .acc .bar{grid-column:1/-1}
+.outline{columns:3 320px;column-gap:56px}
+.subdom{break-inside:avoid;margin:0 0 36px}
+.subdom h2{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:baseline;margin:0;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.3);font-size:17px;font-weight:500;line-height:1.3}
+.subdom h2 .sc{font-weight:300;font-size:13px;color:var(--ink-2)}
+.subdom .lrow,.sibs .lrow{padding:12px 0}
+.lrow .num{display:inline-block;min-width:26px;font-family:var(--display);font-size:13px;color:var(--ink-2)}
+.lrow .s{padding-left:26px}
+.lrow.done .t{color:var(--ink-2)}
+.lrow .s.fin{color:var(--ink-2)}
+.lrow .s.gapnote{color:var(--amber)}
+.lrow.gap .t{color:var(--amber)}
+.lrow.built .t{font-weight:500}
+.lrow.current{background:rgba(255,255,255,0.05)}
+.sibs{margin-bottom:8px;border-top:1px solid var(--rule)}
+.dnav{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;border-top:1px solid var(--rule)}
 
 /* Lesson page */
 .lesson-view{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:64px}
@@ -278,6 +322,8 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 
 /* Responsive */
 @media (max-width:1279px){
+  .dhead{grid-template-columns:auto minmax(0,1fr)}
+  .dhead .acc{grid-column:1/-1;max-width:320px}
   .app{padding:0 32px 28px}
   .domains4{grid-template-columns:repeat(2,minmax(0,1fr))}
   .home-left{padding-top:0}
@@ -288,6 +334,10 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   .runner{grid-template-columns:minmax(0,760px)}
 }
 @media (max-width:900px){
+  .dhead{grid-template-columns:minmax(0,1fr);gap:14px}
+  .dhead .rn,.bigdom .rn{font-size:80px}
+  .dhead h1{font-size:26px}
+  .bigdom h2{min-height:0}
   .app{padding:0 20px 24px;gap:28px}
   .top{grid-template-columns:1fr;height:auto;padding:18px 0 0;row-gap:10px}
   .wordmark{font-size:15px}
@@ -362,10 +412,12 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   <main class="main view" id="view-lessons" hidden>
     <div class="page-head">
       <h1>Lessons</h1>
-      <p>Short visual lessons, grouped by the four NCE content domains. Amber marks lessons for topics under 70%.</p>
+      <p>Every lesson follows the NCE content outline: four domains, each broken into its sections and topics. Pick a domain to see its lessons.</p>
     </div>
-    <div class="domains4" id="lesson-domains"></div>
+    <div class="domains4 big4" id="lesson-domains"></div>
   </main>
+
+  <main class="main view domain-view" id="view-domain" hidden></main>
 
   <main class="main view lesson-view" id="view-lesson" hidden></main>
 
@@ -423,33 +475,6 @@ const DOMAINS = {
 const ORDER = ['bs', 'eq', 'gp', 'sp'];
 const THRESHOLD = 70;
 
-const LESSONS = {
-  bs: [
-    { id: 'odc', title: 'The oxygen-hemoglobin dissociation curve', min: 5, status: 'done' },
-    { id: 'cap', title: 'Phases of the cardiac action potential', min: 6, status: 'done' },
-    { id: 'kid', title: 'How the kidney clears drugs', min: 4 },
-    { id: 'nmj', title: 'The neuromuscular junction', min: 5 }
-  ],
-  eq: [
-    { id: 'vapor', title: 'Why vaporizer output drifts at altitude', min: 4, status: 'gap', note: 'Vaporizers 41%', built: true },
-    { id: 'mapleson', title: 'The Mapleson circuits, A through F', min: 5, status: 'gap', note: 'Breathing circuits 48%', built: true },
-    { id: 'capno', title: 'Reading a capnogram', min: 5 },
-    { id: 'check', title: 'The anesthesia machine checkout', min: 6, status: 'done' }
-  ],
-  gp: [
-    { id: 'last', title: 'Local anesthetic systemic toxicity', min: 5, status: 'done' },
-    { id: 'mac', title: 'MAC and the volatile agents', min: 4, status: 'done' },
-    { id: 'rev', title: 'Reversing neuromuscular blockade', min: 6 },
-    { id: 'airx', title: 'The preoperative airway exam', min: 4 }
-  ],
-  sp: [
-    { id: 'fhr', title: 'Reading a fetal heart rate strip', min: 6, status: 'gap', note: 'Obstetrics 57%', built: true },
-    { id: 'peds', title: 'How the pediatric airway differs', min: 5, status: 'gap', note: 'Pediatric airway 60%' },
-    { id: 'olv', title: 'One-lung ventilation', min: 6 },
-    { id: 'older', title: 'Anesthesia for the older adult', min: 5, status: 'done' }
-  ]
-};
-const lessonById = id => { for (const d of ORDER) { const l = LESSONS[d].find(x => x.id === id); if (l) return { ...l, dom: d }; } return null; };
 
 // Original practice items. type: single | multi | calc
 const QS = [
@@ -545,6 +570,143 @@ const store = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || {};
 store.answered ??= 0; store.correct ??= 0; store.mocks ??= []; store.lessons ??= [];
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch {} };
 
+// NCE content outline (NBCRNA, 2025-2026), one lesson per numbered topic.
+// A subdomain with no numbered topics is a single lesson. Topic names condensed.
+const OUTLINE = {
+  bs: { rn: 'I', subs: [
+    { l: 'A', t: 'Anatomy and physiology', items: ['Cardiovascular', 'Respiratory', 'Central nervous system', 'Musculoskeletal', 'Endocrine', 'Hepatic and renal', 'Hematologic', 'Gastrointestinal', 'Immune'] },
+    { l: 'B', t: 'Pathophysiology', items: [
+      ['Cardiovascular', 'Ischemic heart disease, valvular disease, congenital defects, conduction and rhythm, peripheral vascular, infectious, pericardial, cardiomyopathy and heart failure'],
+      ['Respiratory', 'Obstructive, restrictive, infectious, pulmonary vascular, altered airway anatomy'],
+      ['Central nervous system', 'Neurodegenerative, myelin, cerebrovascular, neuropathies, psychiatric, spinal cord, intracranial tumor, congenital, seizures, intracranial hypertension, thermoregulation'],
+      ['Musculoskeletal', 'Myopathies, neuromuscular, skeletal and other musculoskeletal disorders'],
+      ['Endocrine', 'Thyroid and parathyroid, pituitary, adrenal, endocrine pancreas, other endocrine'],
+      ['Hepatic', 'Infectious, biliary and bilirubin, cirrhosis, hepatovascular'],
+      ['Renal', 'Intrinsic kidney disease, acute kidney injury, chronic kidney disease'],
+      ['Hematologic', 'Anemias, hemoglobin disorders, coagulation'],
+      ['Gastrointestinal', 'Esophageal, gastric, exocrine pancreas, intestinal, secreting tumors, malabsorption'],
+      ['Immune', 'Infectious (such as HIV), hypersensitivity types I to IV, autoimmune'],
+      ['Other conditions', 'Cancer, burns, trauma, substance use disorder, sepsis']
+    ]},
+    { l: 'C', t: 'Pharmacology', items: [
+      ['General principles', 'Pharmacodynamics, pharmacokinetics, pharmacology math'],
+      'Inhalation anesthetics',
+      ['IV anesthetics and antagonists', 'Barbiturates, sedative-hypnotics, benzodiazepines and reversal, opioid agonists, mixed agents and antagonists'],
+      'Neuromuscular blockers and reversal', 'Local anesthetics', 'Lipid emulsion', 'Regional anesthesia adjuncts',
+      'Anticholinergics and cholinergic agonists', 'Non-opioid analgesics',
+      ['Cardiovascular drugs', 'Inotropes, PDE inhibitors, cardiac glycosides, alpha and beta agonists and antagonists, central alpha-2 agonists, ACE inhibitors, ARBs, vasodilators, nitric oxide, antidysrhythmics, calcium channel blockers'],
+      'Bronchodilators',
+      ['Psychopharmacology', 'Antidepressants, antipsychotics, antiparkinsonian drugs, others'],
+      'Prostaglandins', 'Histamine receptor antagonists',
+      ['Antiemetics', '5-HT3 antagonists, prokinetics, antacids, others'],
+      'Insulin', 'Hypoglycemics', 'Diuretics',
+      ['Anticoagulants and reversal', 'Heparin and LMWH, protamine, antiplatelets, oral anticoagulants and reversal, thrombolytics, thrombin inhibitors'],
+      'Procoagulants', 'Antimicrobials and antivirals', 'Antiepileptics', 'Lipid-lowering agents', 'Herbals and supplements',
+      'Minerals and electrolytes', 'Dantrolene', 'Steroids', 'Tocolytics', 'Uterotonics', 'IV dyes', 'Cannabinoids'
+    ]},
+    { l: 'D', t: 'Chemistry, biochemistry, physics and math', items: [
+      ['Chemistry and biochemistry', 'Aqueous solutions, acids and bases, drug reactions, metabolism, cellular mechanisms, drug-receptor interaction'],
+      ['Physics', 'Units, gas laws, solubility and diffusion, pressure and flow, electrical safety, vaporization and humidification, measuring O2, CO2 and pH'],
+      'Non-pharmacology math'
+    ]}
+  ]},
+  eq: { rn: 'II', subs: [
+    { l: 'A', t: 'Anesthetic delivery systems', items: [
+      'High and low pressure gas sources', 'Regulators and manifolds', 'Flowmeters, valves and floats', 'Vaporizers',
+      'Proportioning systems', 'Pressure failure safety devices', 'Fail-safe devices', 'Ventilators', 'CO2 absorbents',
+      ['Breathing circuits', 'Circle system, nonrebreathing, modified nonrebreathing'], 'Pneumatic and electronic alarms'
+    ]},
+    { l: 'B', t: 'Airway equipment', items: [
+      'Face masks', ['Laryngoscopes', 'Rigid, video, optical'], 'Flexible bronchoscope', 'Endotracheal tubes',
+      ['Endobronchial tubes', 'Double-lumen tubes, bronchial blockers'], 'Oral and nasal airways', 'Tracheostomy tubes',
+      'Supraglottic airways', 'Intubating supraglottic airways', 'Jet ventilation', 'Intubating stylets',
+      'Cricothyrotomy, needle and surgical', 'Intubation aids'
+    ]},
+    { l: 'C', t: 'Monitoring devices', items: [
+      ['CNS monitoring', 'Evoked potentials, ICP, processed EEG, cerebral oximetry'],
+      ['Cardiovascular monitoring', 'ECG, arterial line, NIBP, CVP, PA catheter and SvO2, hemodynamic monitors, precordial stethoscope, TEE'],
+      ['Respiratory monitoring', 'Capnography, gas analysis, pulse oximetry, airway pressure, blood gases'],
+      ['Other monitoring', 'Nerve stimulator, temperature, maternal and fetal monitoring']
+    ]},
+    { l: 'D', t: 'Patient warming', items: ['Fluid and blood warmers', 'Forced air warming', 'Heat and moisture exchangers', 'Radiant warmers'] },
+    { l: 'E', t: 'Infusion devices and rapid infusers' },
+    { l: 'F', t: 'Imaging and imaging safety', items: ['Ultrasound', 'Fluoroscopy', 'Radiography'] }
+  ]},
+  gp: { rn: 'III', subs: [
+    { l: 'A', t: 'Ethics', items: ['Autonomy, beneficence, nonmaleficence', 'Research ethics'] },
+    { l: 'B', t: 'Legal issues', items: ['Advance directives', 'Informed consent', 'Disclosing errors and injuries', 'Legal doctrines', 'Torts', 'Scope of practice', 'Standards of practice', 'Billing'] },
+    { l: 'C', t: 'Safety and wellness', items: ['Provider substance use disorder', 'Patient safety', 'The impaired provider', 'Wellness and peer assistance'] },
+    { l: 'D', t: 'Preoperative assessment and preparation' },
+    { l: 'E', t: 'Fluids and blood', items: ['Fluid and blood component therapy', 'Bloodless medicine', 'Goal-directed fluid management', 'Massive transfusion protocol', 'Thromboelastography'] },
+    { l: 'F', t: 'Positioning', items: ['Techniques', 'Physiologic changes', 'Complications'] },
+    { l: 'G', t: 'Interpreting test data', items: ['Lab tests, including blood gases and ACT', 'Diagnostic tests, including the 12-lead ECG'] },
+    { l: 'H', t: 'Airway management', items: ['Airway assessment', 'Techniques and devices', 'Complications', 'The difficult airway algorithm'] },
+    { l: 'I', t: 'Local and regional anesthesia', items: ['Anatomy', 'Infiltration', 'Topical', 'Neuraxial', 'Peripheral nerve blocks', ['Other blocks', 'Airway, retrobulbar'], 'Ultrasound and nerve stimulator guidance', ['Complications', 'Including local anesthetic systemic toxicity']] },
+    { l: 'J', t: 'Sedation: light, moderate and deep' },
+    { l: 'K', t: 'Total intravenous anesthesia' },
+    { l: 'L', t: 'Pain', items: [['Pain theory', 'Acute and chronic'], ['Pain management', 'Acute, chronic, multimodal']] },
+    { l: 'M', t: 'Enhanced recovery after surgery' },
+    { l: 'N', t: 'Hypotensive technique and risks' },
+    { l: 'O', t: 'Postanesthesia care and respiratory therapy' },
+    { l: 'P', t: 'Infection control', items: [['Protecting the provider', 'PPE, room air handling, UV sanitizers'], ['Protecting the patient', 'Aseptic technique, workstation cleaning, needle safety']] },
+    { l: 'Q', t: 'Operating room fire safety' }
+  ]},
+  sp: { rn: 'IV', subs: [
+    { l: 'A', t: 'Surgical and diagnostic procedures', items: [
+      ['Intra-abdominal', 'Hepatobiliary, GI, endocrine organs, renal and GU, gynecologic, peritoneal and hernia'],
+      ['Extrathoracic', 'Breast, plastics and reconstruction'],
+      ['Head', 'ENT, ophthalmic, nasal, craniofacial, dental; craniotomy, vascular, transsphenoidal, stereotactic'],
+      ['Cardiac', 'Open heart, TAVR and other minimally invasive, pacemakers and EP, VAD, ECMO, IABP'],
+      ['Noncardiac thoracic', 'Diaphragm, bronchoscopy and mediastinoscopy, esophagus, lung, mediastinum'],
+      ['Neck', 'Larynx and trachea, lymph node biopsy, thyroid and parathyroid, neck tumors'],
+      ['Neuroskeletal', 'Cervical spine, laminectomy and fusion, pain procedures'],
+      ['Orthopedic', 'Arthroscopy, closed reduction, fractures, joint replacement, hand and foot'],
+      ['Perineal and pelvic', 'Gynecologic, GU, anorectal'],
+      ['Vascular', 'Carotid, thoracic, abdominal, extremity and access, VTE prevention, portal hypertension'],
+      ['Anesthesia outside the OR', 'Radiology, ECT, interventional radiology, radiation therapy, endoscopy'],
+      'Robotic and laparoscopic surgery',
+      ['Other procedures', 'Trauma, burns, transplant, organ procurement, laser']
+    ]},
+    { l: 'B', t: 'Special populations', items: [
+      ['Pediatrics', 'Normal, premature and congenital physiology, pharmacology, techniques, complications'],
+      ['Obstetrics', 'Physiology, pharmacology, techniques, high-risk parturients, nonobstetric surgery, complications, postpartum hemorrhage'],
+      ['Geriatrics', 'Physiology, pharmacology, techniques, postoperative cognitive dysfunction'],
+      ['Obesity', 'Physiology, pharmacology, techniques including bariatric surgery, complications'],
+      ['Substance use disorder', 'Methadone and buprenorphine, acute intoxication, pain management, complications'],
+      ['Immunocompromised and oncology patients', 'Pharmacology, techniques, management']
+    ]}
+  ]}
+};
+// Fully built lessons, attached to their outline topic.
+const BUILT = {
+  'II-A-4': { id: 'vapor', title: 'Why vaporizer output drifts at altitude', min: 4 },
+  'II-A-10': { id: 'mapleson', title: 'The Mapleson circuits, A through F', min: 5 },
+  'IV-B-2': { id: 'fhr', title: 'Reading a fetal heart rate strip', min: 6 }
+};
+// Sample progress for the demo student.
+const SAMPLE_DONE = ['I-A-1', 'I-A-2', 'I-C-2', 'I-C-4', 'I-C-5', 'I-D-2', 'II-A-1', 'II-A-9', 'II-C-3', 'III-H-1', 'III-H-4', 'III-I-8', 'III-D', 'IV-B-3'];
+const GAPS = { 'II-A-4': 'Vaporizers 41%', 'II-A-10': 'Breathing circuits 48%', 'IV-B-2': 'Obstetrics 57%', 'IV-B-1': 'Pediatric airway 60%' };
+
+// Flatten into lessons.
+const ALL_LESSONS = [];
+ORDER.forEach(dom => {
+  const R = OUTLINE[dom].rn;
+  OUTLINE[dom].subs.forEach(s => {
+    const list = s.items ? s.items.map((it, i) => ({ key: `${R}-${s.l}-${i + 1}`, n: i + 1, topic: Array.isArray(it) ? it[0] : it, covers: Array.isArray(it) ? it[1] : '' }))
+                         : [{ key: `${R}-${s.l}`, n: null, topic: s.t, covers: '' }];
+    s.lessons = list.map(x => {
+      const b = BUILT[x.key];
+      let h = 0; for (const c of x.key) h = (h * 31 + c.charCodeAt(0)) % 997;
+      const L = { ...x, dom, sub: s, id: b ? b.id : x.key, built: !!b, title: b ? b.title : x.topic, min: b ? b.min : 4 + (h % 4),
+        sample: SAMPLE_DONE.includes(x.key), note: GAPS[x.key] || '' };
+      ALL_LESSONS.push(L);
+      return L;
+    });
+  });
+});
+const lessonById = id => ALL_LESSONS.find(l => l.id === id) || null;
+const isDone = l => l.sample || store.lessons.includes(l.id);
+
 /* ---------- Helpers ---------- */
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -618,25 +780,58 @@ function renderHome() {
 }
 
 /* ---------- Lessons ---------- */
+function domStats(k) {
+  const ls = ALL_LESSONS.filter(l => l.dom === k);
+  return { total: ls.length, done: ls.filter(isDone).length, gaps: ls.filter(l => l.note && !isDone(l)).length, built: ls.filter(l => l.built).length };
+}
 function renderLessons() {
   $('#lesson-domains').innerHTML = ORDER.map(k => {
-    const d = DOMAINS[k], weak = d.accuracy < THRESHOLD, list = LESSONS[k];
-    const done = list.filter(l => l.status === 'done' || store.lessons.includes(l.id)).length;
-    return `<section class="dom${weak ? ' weak' : ''}">
-      <div class="dom-head"><h2>${esc(d.name)}</h2>
-        <span class="score" aria-label="${d.accuracy} percent accuracy">${d.accuracy}</span>
-        <span class="meta">${done} of ${list.length} lessons finished</span></div>
+    const d = DOMAINS[k], o = OUTLINE[k], weak = d.accuracy < THRESHOLD, st = domStats(k);
+    return `<a class="bigdom${weak ? ' weak' : ''}" href="#lessons/${k}">
+      <span class="rn" aria-hidden="true">${o.rn}</span>
+      <h2>${esc(d.name)}</h2>
+      <div class="acc"><span class="score" aria-label="${d.accuracy} percent accuracy">${d.accuracy}</span><span class="meta">accuracy, last 30 days</span></div>
       <div class="bar"><i data-w="${d.accuracy}"></i></div>
-      ${list.map(l => {
-        const fin = l.status === 'done' || store.lessons.includes(l.id);
-        const cls = fin ? 'done' : (l.status || '');
-        const sub = fin ? 'Finished' : l.status === 'gap' ? `For your gap: ${esc(l.note)}` : '';
-        return `<a class="lrow ${cls}" href="#lesson/${l.id}"><span class="t">${esc(l.title)}</span><span class="m">${l.min} min</span>
-          ${sub ? `<span class="s">${sub}</span>` : ''}</a>`;
-      }).join('')}
-    </section>`;
+      <div class="stats"><span><b>${st.total}</b> lessons</span><span><b>${st.done}</b> finished</span>${st.gaps ? `<span class="amber"><b>${st.gaps}</b> for your gaps</span>` : ''}</div>
+      <ol class="subs">${o.subs.map(s => `<li><span class="sl">${s.l}</span><span>${esc(s.t)}</span><span class="sc">${s.lessons.length}</span></li>`).join('')}</ol>
+      <span class="open">Open domain ${o.rn}</span>
+    </a>`;
   }).join('');
   animateBars($('#view-lessons'));
+}
+function lessonRow(l) {
+  const fin = isDone(l);
+  const cls = ['lrow', fin ? 'done' : '', l.note && !fin ? 'gap' : '', l.built ? 'built' : ''].join(' ');
+  let s = '';
+  if (l.built) s = `<span class="s ready">Interactive lesson: ${esc(l.title)}</span>`;
+  else if (l.covers) s = `<span class="s">${esc(l.covers)}</span>`;
+  const flag = fin ? '<span class="s fin">Finished</span>' : l.note ? `<span class="s gapnote">For your gap: ${esc(l.note)}</span>` : '';
+  return `<a class="${cls}" href="#lesson/${l.id}">
+    <span class="t">${l.n ? `<span class="num">${l.n}</span>` : ''}${esc(l.topic)}</span><span class="m">${l.min} min</span>${s}${flag}</a>`;
+}
+function renderDomain(k) {
+  if (!OUTLINE[k]) { location.hash = '#lessons'; return; }
+  const d = DOMAINS[k], o = OUTLINE[k], weak = d.accuracy < THRESHOLD, st = domStats(k);
+  const i = ORDER.indexOf(k), prev = ORDER[i - 1], next = ORDER[i + 1];
+  $('#view-domain').innerHTML = `
+    <div class="crumb"><a href="#lessons">Lessons</a> · Domain ${o.rn}</div>
+    <div class="dhead${weak ? ' weak' : ''}">
+      <span class="rn" aria-hidden="true">${o.rn}</span>
+      <div class="dt"><h1>${esc(d.name)}</h1>
+        <p>${st.total} lessons in ${o.subs.length} sections, following the NCE content outline. ${st.done} finished.${st.gaps ? ` <span class="amber">${st.gaps} cover your gaps.</span>` : ''}</p></div>
+      <div class="acc"><span class="score">${d.accuracy}</span><span class="meta">accuracy</span><div class="bar"><i data-w="${d.accuracy}"></i></div></div>
+    </div>
+    <div class="outline">${o.subs.map(s => `
+      <section class="subdom" aria-labelledby="sd-${o.rn}-${s.l}">
+        <h2 id="sd-${o.rn}-${s.l}"><span class="sl">${o.rn}.${s.l}</span>${esc(s.t)}<span class="sc">${s.lessons.length === 1 && !s.items ? '' : s.lessons.length}</span></h2>
+        ${s.lessons.map(lessonRow).join('')}
+      </section>`).join('')}
+    </div>
+    <div class="dnav">
+      ${prev ? `<a class="all" href="#lessons/${prev}">Domain ${OUTLINE[prev].rn}: ${esc(DOMAINS[prev].short)}</a>` : '<span></span>'}
+      ${next ? `<a class="all" href="#lessons/${next}">Domain ${OUTLINE[next].rn}: ${esc(DOMAINS[next].short)}</a>` : `<a class="all" href="#lessons">All four domains</a>`}
+    </div>`;
+  animateBars($('#view-domain'));
 }
 
 const LESSON_BODY = {
@@ -811,29 +1006,39 @@ const LESSON_BODY = {
 function renderLesson(id) {
   const l = lessonById(id), root = $('#view-lesson');
   if (!l) { location.hash = '#lessons'; return; }
-  const d = DOMAINS[l.dom], body = LESSON_BODY[id];
+  const d = DOMAINS[l.dom], body = LESSON_BODY[id], o = OUTLINE[l.dom];
   const domQs = QS.filter(q => q.dom === l.dom).length;
-  const crumb = `<div class="crumb"><a href="#lessons">Lessons</a> · ${esc(d.short)}</div>`;
+  const path = `${o.rn}.${l.sub.l}${l.n ? '.' + l.n : ''}`;
+  const crumb = `<div class="crumb"><a href="#lessons">Lessons</a> · <a href="#lessons/${l.dom}">Domain ${o.rn}</a> · ${esc(l.sub.t)}${l.n ? ' · ' + esc(l.topic) : ''}</div>`;
   if (!body) {
+    const covers = l.covers ? l.covers.split(/, |; /) : [];
+    const sibs = l.sub.lessons, idx = sibs.indexOf(l), nx = sibs[idx + 1];
     root.innerHTML = `${crumb}
-      <section class="col lede"><h1>${esc(l.title)}</h1><div class="meta">${l.min} min, ${esc(d.short.toLowerCase())}</div>
-        <p class="big-idea">This lesson is outlined but not written yet. Three lessons are fully built in this prototype.</p>
+      <section class="col lede"><h1>${esc(l.title)}</h1><div class="meta">Outline ${path} · ${l.min} min${l.note ? ` · <span style="color:var(--amber)">your accuracy: ${esc(l.note)}</span>` : ''}</div>
+        <p class="big-idea">This lesson is planned but not written yet. Three interactive lessons are built in this prototype.</p>
+        ${covers.length ? `<h2 class="fig-label">What It Will Cover</h2><ol class="points">${covers.map(c => `<li><span>${esc(c.charAt(0).toUpperCase() + c.slice(1))}</span></li>`).join('')}</ol>` : ''}
         <div class="lesson-actions">
           <a class="btn" href="#lesson/vapor">OPEN A BUILT LESSON</a>
           <a class="btn quiet" href="#practice/${l.dom}">PRACTICE ${domQs} QUESTIONS</a>
-        </div></section><section class="col"></section>`;
+        </div></section>
+      <section class="col figure">
+        <h2 class="fig-label">${o.rn}.${l.sub.l} ${esc(l.sub.t)}</h2>
+        <p class="fig-help">${sibs.length} ${sibs.length === 1 ? 'lesson' : 'lessons'} in this section.</p>
+        <div class="sibs">${sibs.map(x => x === l ? lessonRow(x).replace('class="lrow', 'aria-current="page" class="lrow current') : lessonRow(x)).join('')}</div>
+        ${nx ? `<a class="all" href="#lesson/${nx.id}">Next: ${esc(nx.topic)}</a>` : `<a class="all" href="#lessons/${l.dom}">Back to domain ${o.rn}</a>`}
+      </section>`;
     return;
   }
   const fin = store.lessons.includes(id);
   root.innerHTML = `${crumb}
     <section class="col lede">
       <h1>${esc(l.title)}</h1>
-      <div class="meta">${l.min} min, ${esc(d.short.toLowerCase())}${l.note ? ` · <span style="color:var(--amber)">your accuracy: ${esc(l.note)}</span>` : ''}</div>
+      <div class="meta">Outline ${path}, ${esc(l.topic.toLowerCase())} · ${l.min} min${l.note ? ` · <span style="color:var(--amber)">your accuracy: ${esc(l.note)}</span>` : ''}</div>
       <p class="big-idea">${esc(body.idea)}</p>
       <ol class="points">${body.points.map(p => `<li><span>${p}</span></li>`).join('')}</ol>
       <div class="lesson-actions">
         <a class="btn" id="finish" href="#practice/${l.dom}">${fin ? 'PRACTICE AGAIN' : 'FINISH AND PRACTICE'}</a>
-        <a class="btn quiet" href="#lessons">ALL LESSONS</a>
+        <a class="btn quiet" href="#lessons/${l.dom}">DOMAIN ${o.rn} LESSONS</a>
       </div>
     </section>
     <section class="col figure">${body.figure()}</section>`;
@@ -1048,12 +1253,12 @@ function renderProfile() {
   const kv = rows => rows.map(([k, v]) => `<div class="kv"><span class="k">${esc(k)}</span><span class="v${/^[\d,]+%?$/.test(v) ? ' num' : ''}">${esc(v)}</span></div>`).join('');
   const baseAns = 1284, baseCor = 847;
   const ans = baseAns + store.answered, cor = baseCor + store.correct;
-  const finished = new Set([...ORDER.flatMap(k => LESSONS[k].filter(l => l.status === 'done').map(l => l.id)), ...store.lessons]).size;
+  const finished = ALL_LESSONS.filter(isDone).length;
   const lastMock = store.mocks.length ? store.mocks[store.mocks.length - 1].score + '%' : 'None yet';
   $('#prof-about').innerHTML = kv(PROFILE_ABOUT);
   $('#prof-record').innerHTML = kv([
     ['Readiness now', '68'], ['Questions answered', ans.toLocaleString()], ['Overall accuracy', Math.round(cor / ans * 100) + '%'],
-    ['Lessons finished', `${finished} of 16`], ['Last mock', lastMock]
+    ['Lessons finished', `${finished} of ${ALL_LESSONS.length}`], ['Last mock', lastMock]
   ]);
 }
 
@@ -1069,7 +1274,7 @@ function route() {
   if (run && run.mode === 'mock' && !run.done && !(a === 'mock' && b === 'run')) { stopRun(); run = null; }
   window.scrollTo(0, 0);
   switch (a) {
-    case 'lessons': setNav('lessons'); renderLessons(); show('lessons'); break;
+    case 'lessons': setNav('lessons'); if (b) { show('domain'); renderDomain(b); } else { renderLessons(); show('lessons'); } break;
     case 'lesson': setNav('lessons'); show('lesson'); renderLesson(b); break;
     case 'questions': setNav('questions'); renderQuestions(); show('questions'); break;
     case 'practice': setNav('questions'); show('run'); startPractice(b); break;
