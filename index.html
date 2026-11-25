@@ -121,6 +121,51 @@ a.lrow:hover .t{color:var(--steel-text)}
 .lrow.done .t{color:var(--ink-2)}
 .lrow .s.ready{color:var(--steel-text)}
 
+/* Home analytics */
+.home{row-gap:56px}
+.home .home-left{padding-top:0}
+.ring-note{margin:0;font-size:15px;line-height:1.5;color:var(--ink-2);max-width:320px}
+.wt{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px;align-items:end;padding:14px 0;border-top:1px solid var(--rule);text-decoration:none;color:inherit}
+.wt:last-of-type{border-bottom:1px solid var(--rule)}
+.wt .wn{font-size:16px;font-weight:400;transition:color .15s ease}
+.wt:hover .wn{color:var(--steel-text)}
+.wt .wn small{display:block;font-size:13px;font-weight:300;color:var(--ink-2);margin-top:2px}
+.wt .ws{font-family:var(--display);font-size:28px;line-height:1}
+.wt.weak .ws{color:var(--amber)}
+.wt .bar{grid-column:1/-1}
+.wt.weak .bar i{background:var(--amber)}
+.statrow{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));column-gap:32px;border-bottom:1px solid var(--rule)}
+.stat{display:flex;flex-direction:column;gap:6px;padding:22px 0;border-top:1px solid var(--rule)}
+.sk{font-size:14px;color:var(--ink-2)}
+.sv{font-family:var(--display);font-size:34px;line-height:1.1;font-variant-numeric:tabular-nums}
+.ss{font-size:13px;color:var(--ink-2)}
+.trend{grid-column:1 / span 2}
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto}
+.chart .grid{stroke:rgba(255,255,255,0.08);stroke-width:1}
+.chart .lab{fill:rgba(255,255,255,0.72);font-size:12px;font-family:var(--text)}
+.chart .goal{stroke:rgba(255,255,255,0.55);stroke-width:1;stroke-dasharray:4 5}
+.chart .goal-lab{fill:rgba(255,255,255,0.85)}
+.chart .line{fill:none;stroke:var(--steel);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.chart .end,.chart .dot{fill:var(--steel);stroke:var(--bg);stroke-width:2}
+.chart .end-lab{fill:#fff;font-size:14px}
+.chart .cross{stroke:rgba(255,255,255,0.3);stroke-width:1}
+.chart .hit{fill:transparent;cursor:crosshair}
+.tip{position:absolute;pointer-events:none;width:120px;padding:8px 12px;background:oklch(0.25 0.02 238);border:1px solid var(--rule);border-radius:4px;font-size:13px;display:flex;flex-direction:column;gap:2px}
+.tip span{color:var(--ink-2)}
+.tip b{font-family:var(--display);font-weight:400;font-size:22px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.mk{align-items:center}
+.mk .k b{display:block;font-weight:400;color:#fff;font-size:15px;margin-top:2px}
+.act{display:grid;grid-template-columns:repeat(7,30px);gap:5px}
+.ac{display:block;aspect-ratio:1;border-radius:2px;background:rgba(255,255,255,0.06)}
+.ac.l1{background:oklch(0.86 0.035 230 / 0.3)}
+.ac.l2{background:oklch(0.86 0.035 230 / 0.6)}
+.ac.l3{background:var(--steel)}
+.act-key{display:flex;justify-content:space-between;gap:12px;margin-top:12px;font-size:13px;color:var(--ink-2);flex-wrap:wrap}
+.act-key .keys{display:flex;align-items:center;gap:4px}
+.act-key .keys i{width:12px;height:12px;aspect-ratio:auto}
+
 /* Lessons: domain rows that open to sections, then lessons */
 .lessons-list{grid-column:1/-1;border-top:1px solid var(--rule)}
 .drow{border-bottom:1px solid var(--rule)}
@@ -320,6 +365,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 
 /* Responsive */
 @media (max-width:1279px){
+  .trend{grid-column:1/-1}
   .dhit{grid-template-columns:110px minmax(0,1fr) auto 28px}
   .secs{padding-left:134px}
   .app{padding:0 32px 28px}
@@ -332,6 +378,9 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   .runner{grid-template-columns:minmax(0,760px)}
 }
 @media (max-width:900px){
+  .statrow{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px}
+  .stat{padding:16px 0}
+  .sv{font-size:26px}
   .dhit{grid-template-columns:minmax(0,1fr) 24px;gap:6px 14px;min-height:0;padding:20px 0}
   .dhit .dn,.dhit .dname,.dhit .dc{grid-column:1}
   .dhit .chev{grid-column:2;grid-row:1/4}
@@ -383,10 +432,11 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
     <span class="who"><span id="days">34</span> days to the NCE · <a href="#profile" data-nav="profile" id="who-name">Maya Okafor</a></span>
   </header>
 
-  <main class="main view" id="view-home">
-    <section class="col home-left" aria-label="Accuracy by NCE domain">
+  <main class="main view home" id="view-home">
+    <section class="col home-left" aria-labelledby="dom-h">
+      <h2 class="col-head" id="dom-h">Accuracy By Domain</h2>
       <div id="domains"></div>
-      <span class="note">Accuracy over the last 30 days. Amber is under 70%.</span>
+      <span class="note">Last 30 days. Amber is under 70%.</span>
     </section>
     <section class="col center" aria-label="Readiness">
       <div class="ring" role="img" id="ring" aria-label="Readiness 68 of 100, goal 75">
@@ -400,12 +450,26 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
           <span class="sub">readiness, goal 75</span>
         </div>
       </div>
-      <a class="btn begin" href="#lesson/vapor">BEGIN</a>
+      <p class="ring-note" id="ring-note"></p>
     </section>
-    <section class="col" aria-labelledby="lessons-h">
-      <h2 class="col-head" id="lessons-h">Short Lessons For Your Gaps</h2>
-      <div id="lesson-list"></div>
-      <a class="all" href="#lessons">Browse every lesson</a>
+    <section class="col" aria-labelledby="weak-h">
+      <h2 class="col-head" id="weak-h">Weakest Topics</h2>
+      <div id="weak-topics"></div>
+      <span class="note">Topics with at least 15 answers in the last 30 days.</span>
+    </section>
+
+    <div class="statrow" id="statrow"></div>
+
+    <section class="col trend" aria-labelledby="trend-h">
+      <h2 class="col-head" id="trend-h">Readiness, Last 10 Weeks</h2>
+      <div class="chart" id="trend"></div>
+    </section>
+    <section class="col" aria-labelledby="mocks-h">
+      <h2 class="col-head" id="mocks-h">Mock Exams</h2>
+      <div id="mock-list"></div>
+      <a class="all" href="#questions/nce">Take a mock</a>
+      <h2 class="col-head" style="margin-top:36px" id="act-h">Days Studied, Last 4 Weeks</h2>
+      <div id="activity" aria-labelledby="act-h"></div>
     </section>
   </main>
 
@@ -740,29 +804,113 @@ const thumb = id => `<span class="thumb" style="color:var(--steel)">${THUMBS[id]
 
 /* ---------- Home ---------- */
 function renderHome() {
-  const readiness = 68, goal = 75, gap = goal - readiness;
+  const readiness = 68, goal = 75;
   $('#readiness').textContent = readiness;
   const doms = ORDER.map(k => ({ k, ...DOMAINS[k] })).sort((a, b) => a.accuracy - b.accuracy);
   $('#domains').innerHTML = doms.map(d => {
     const weak = d.accuracy < THRESHOLD;
-    return `<div class="domain${weak ? ' weak' : ''}${d.topics ? ' has-topics' : ''}">
+    return `<div class="domain${weak ? ' weak' : ''}">
       <span class="name">${esc(d.short)}</span>
       <span class="score" aria-label="${d.accuracy} percent">${d.accuracy}</span>
       <div class="bar"><i data-w="${d.accuracy}"></i></div>
-      ${d.topics ? `<span class="topics">${esc(d.topics)}</span>` : ''}
     </div>`;
   }).join('');
-  const picks = [['vapor', 'equipment'], ['mapleson', 'equipment'], ['fhr', 'obstetrics']];
-  $('#lesson-list').innerHTML = picks.map(([id, tag]) => {
-    const l = lessonById(id);
-    return `<a class="lesson" href="#lesson/${id}">${thumb(id)}
-      <div class="info"><span class="title">${esc(l.title)}</span><span class="meta">${l.min} min, ${tag}</span></div></a>`;
-  }).join('');
+  const wk = HOME.trend, delta = wk[wk.length - 1] - wk[wk.length - 5];
+  $('#ring-note').textContent = `Up ${delta} points in the last 4 weeks. ${goal - readiness} points to your goal.`;
+
+  $('#weak-topics').innerHTML = HOME.weak.map(t => `
+    <a class="wt${t.acc < THRESHOLD ? ' weak' : ''}" href="#lesson/${t.lesson}">
+      <span class="wn">${esc(t.topic)}<small>${esc(DOMAINS[t.dom].short)} · ${t.n} answered</small></span>
+      <span class="ws">${t.acc}%</span>
+      <div class="bar"><i data-w="${t.acc}"></i></div>
+    </a>`).join('');
+
+  const ans = 1284 + store.answered, cor = 847 + store.correct;
+  const stats = [
+    ['Questions answered', ans.toLocaleString(), '212 this week'],
+    ['Overall accuracy', Math.round(cor / ans * 100) + '%', 'All questions, all time'],
+    ['Study streak', HOME.streak + ' days', 'Longest: 14 days'],
+    ['Study time this week', '3 h 40 min', 'Target: 20 min a day'],
+    ['Lessons finished', `${ALL_LESSONS.filter(isDone).length} of ${ALL_LESSONS.length}`, 'Across all four domains']
+  ];
+  $('#statrow').innerHTML = stats.map(([k, v, sub]) => `<div class="stat"><span class="sk">${k}</span><span class="sv">${v}</span><span class="ss">${sub}</span></div>`).join('');
+
+  drawTrend(goal);
+
+  const mine = store.mocks.slice().reverse().map(m => ({ kind: MOCKS[m.kind || 'nce'].label, date: new Date(m.at), score: m.score, n: mockCount(m.kind || 'nce') }));
+  const rows = mine.concat(HOME.mocks.map(m => ({ ...m, date: new Date(m.date) }))).slice(0, 5);
+  $('#mock-list').innerHTML = rows.map(m => `<div class="kv mk"><span class="k">${m.date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}<b>${esc(m.kind)}</b></span><span class="v num"${m.score < THRESHOLD ? ' style="color:var(--amber)"' : ''}>${m.score}%</span></div>`).join('');
+
+  const days = HOME.activity, today = new Date();
+  $('#activity').innerHTML = `<div class="act" role="list">${days.map((m, i) => {
+    const d = new Date(today); d.setDate(today.getDate() - (days.length - 1 - i));
+    const lvl = m === 0 ? 0 : m < 15 ? 1 : m < 30 ? 2 : 3;
+    const label = `${d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}: ${m ? m + ' min' : 'no study'}`;
+    return `<span role="listitem" class="ac l${lvl}" title="${label}" aria-label="${label}"></span>`;
+  }).join('')}</div>
+  <div class="act-key"><span>${days.filter(Boolean).length} of 28 days</span><span class="keys">None <i class="ac l0"></i><i class="ac l1"></i><i class="ac l2"></i><i class="ac l3"></i> 30+ min</span></div>`;
+
   requestAnimationFrame(() => requestAnimationFrame(() => {
     $('#ring-fill').style.strokeDasharray = (C * readiness / 100).toFixed(1) + ' ' + C.toFixed(1);
   }));
   animateBars($('#view-home'));
 }
+function drawTrend(goal) {
+  const vals = HOME.trend, n = vals.length, W = 720, H = 240, L = 36, R = 16, T = 16, B = 30;
+  const lo = 40, hi = 80, x = i => L + (W - L - R) * i / (n - 1), y = v => T + (H - T - B) * (hi - v) / (hi - lo);
+  const today = new Date();
+  const lab = i => { const d = new Date(today); d.setDate(today.getDate() - 7 * (n - 1 - i)); return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); };
+  let g = '';
+  [40, 50, 60, 70, 80].forEach(v => { g += `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="lab" x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`; });
+  [0, Math.floor((n - 1) / 2), n - 1].forEach(i => { g += `<text class="lab" x="${x(i)}" y="${H - 8}" text-anchor="${i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle'}">${lab(i)}</text>`; });
+  const pts = vals.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  $('#trend').innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Readiness by week, from ${vals[0]} to ${vals[n - 1]}. Goal ${goal}.">
+      ${g}
+      <line class="goal" x1="${L}" x2="${W - R}" y1="${y(goal)}" y2="${y(goal)}"/>
+      <text class="lab goal-lab" x="${W - R}" y="${y(goal) - 7}" text-anchor="end">Goal ${goal}</text>
+      <polyline class="line" points="${pts}"/>
+      <circle class="end" cx="${x(n - 1)}" cy="${y(vals[n - 1])}" r="4.5"/>
+      <text class="lab end-lab" x="${x(n - 1) - 10}" y="${y(vals[n - 1]) + 18}" text-anchor="end">${vals[n - 1]}</text>
+      <line class="cross" id="tr-cross" x1="0" x2="0" y1="${T}" y2="${H - B}" visibility="hidden"/>
+      <circle class="dot" id="tr-dot" r="4.5" visibility="hidden"/>
+      ${vals.map((v, i) => `<rect class="hit" data-i="${i}" x="${x(i) - (W - L - R) / (n - 1) / 2}" y="${T}" width="${(W - L - R) / (n - 1)}" height="${H - T - B}"/>`).join('')}
+    </svg>
+    <div class="tip" id="tr-tip" hidden></div>
+    <table class="sr-only"><caption>Readiness by week</caption><tr><th>Week of</th><th>Readiness</th></tr>${vals.map((v, i) => `<tr><td>${lab(i)}</td><td>${v}</td></tr>`).join('')}</table>`;
+  const svg = $('#trend svg'), tip = $('#tr-tip'), cross = $('#tr-cross'), dot = $('#tr-dot');
+  svg.querySelectorAll('.hit').forEach(r => {
+    r.addEventListener('mouseenter', () => {
+      const i = +r.dataset.i, cx = x(i), cy = y(vals[i]);
+      cross.setAttribute('x1', cx); cross.setAttribute('x2', cx); cross.setAttribute('visibility', 'visible');
+      dot.setAttribute('cx', cx); dot.setAttribute('cy', cy); dot.setAttribute('visibility', 'visible');
+      tip.innerHTML = `<span>Week of ${lab(i)}</span><b>${vals[i]}</b>`; tip.hidden = false;
+      const box = svg.getBoundingClientRect(), sc = box.width / W;
+      tip.style.left = Math.min(box.width - 120, Math.max(0, cx * sc - 60)) + 'px';
+      tip.style.top = Math.max(0, cy * sc - 64) + 'px';
+    });
+  });
+  svg.addEventListener('mouseleave', () => { tip.hidden = true; cross.setAttribute('visibility', 'hidden'); dot.setAttribute('visibility', 'hidden'); });
+}
+const HOME = {
+  trend: [51, 53, 55, 56, 58, 61, 62, 64, 66, 68],
+  streak: 9,
+  weak: [
+    { topic: 'Vaporizers', dom: 'eq', acc: 41, n: 34, lesson: 'vapor' },
+    { topic: 'Breathing circuits', dom: 'eq', acc: 48, n: 29, lesson: 'mapleson' },
+    { topic: 'Obstetrics', dom: 'sp', acc: 57, n: 41, lesson: 'fhr' },
+    { topic: 'Pediatrics', dom: 'sp', acc: 60, n: 22, lesson: 'IV-B-1' },
+    { topic: 'Neuromuscular blockers', dom: 'bs', acc: 64, n: 31, lesson: 'I-C-4' },
+    { topic: 'Capnography', dom: 'eq', acc: 66, n: 18, lesson: 'II-C-3' }
+  ],
+  mocks: [
+    { kind: 'Mock NCE', date: '2026-11-18', score: 69 },
+    { kind: 'Mock SEE', date: '2026-11-04', score: 64 },
+    { kind: 'Mock NCE', date: '2026-10-21', score: 61 },
+    { kind: 'Mock SEE', date: '2026-10-02', score: 57 }
+  ],
+  activity: [25, 0, 18, 32, 40, 0, 12, 22, 30, 0, 0, 28, 35, 20, 15, 0, 26, 31, 44, 18, 0, 22, 27, 33, 19, 24, 38, 21]
+};
 
 /* ---------- Lessons ---------- */
 const DNUM = { bs: 1, eq: 2, gp: 3, sp: 4 };
