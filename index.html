@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Ether Education: a prototype study platform for the NCE, the nurse anesthesia board exam.">
+<title>Ether Education</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23242d36'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23c9d9e4' stroke-width='1.6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=Kumbh+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: oklch(0.19 0.015 240);
+  --bg-top: oklch(0.31 0.025 235);
+  --ink: oklch(0.97 0.005 250);
+  --ink-2: rgba(255,255,255,0.80);
+  --ink-3: rgba(255,255,255,0.84);
+  --rule: rgba(255,255,255,0.14);
+  --track: rgba(255,255,255,0.12);
+  --steel: oklch(0.86 0.035 230);
+  --steel-text: oklch(0.92 0.025 230);
+  --link: oklch(0.89 0.03 230);
+  --amber: oklch(0.85 0.1 85);
+  --display: 'Julius Sans One', sans-serif;
+  --text: 'Kumbh Sans', sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--text);font-weight:300;-webkit-font-smoothing:antialiased}
+.app{
+  position:relative;min-height:100vh;
+  background:linear-gradient(180deg,var(--bg-top) 0%,var(--bg) 62%) no-repeat;
+  background-size:100% max(100vh,900px);
+  padding:0 56px 32px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:44px;
+}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #fff;outline-offset:2px}
+[hidden]{display:none !important}
+
+/* Header */
+.top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px;height:84px;border-bottom:1px solid var(--rule)}
+.wordmark{font-family:var(--display);font-size:19px;letter-spacing:0.28em;white-space:nowrap;text-decoration:none}
+.nav{display:flex;gap:36px;align-self:stretch}
+.nav a{display:flex;align-items:center;color:var(--ink-3);text-decoration:none;font-size:16px;border-bottom:1px solid transparent;margin-bottom:-1px;transition:color .15s ease}
+.nav a:hover{color:#fff}
+.nav a[aria-current="page"]{color:#fff;font-weight:500;border-bottom-color:var(--steel)}
+.who{justify-self:end;font-size:15px;color:var(--ink-2);white-space:nowrap}
+.who a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.3);padding-bottom:1px;transition:border-color .15s ease}
+.who a:hover,.who a[aria-current="page"]{border-bottom-color:var(--steel)}
+
+/* Shared */
+.main{display:grid;grid-template-columns:minmax(0,1fr) 460px minmax(0,1fr);gap:64px;min-height:0;align-content:start}
+.col{display:flex;flex-direction:column;min-width:0}
+.col-head{font-family:var(--display);font-size:17px;letter-spacing:0.08em;padding-bottom:18px;margin:0;font-weight:400}
+.page-head{grid-column:1/-1;display:flex;align-items:baseline;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.page-head h1{margin:0;font-family:var(--display);font-size:36px;font-weight:400;letter-spacing:0.02em}
+.page-head p{margin:0;font-size:15px;color:var(--ink-2);max-width:620px;line-height:1.5}
+.bar{height:2px;background:var(--track)}
+.bar i{display:block;height:100%;width:0;background:var(--steel);transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.weak .bar i{background:var(--amber)}
+.note{padding-top:16px;font-size:14px;color:var(--ink-2);line-height:1.5}
+.all{padding-top:16px;font-size:15px;color:var(--link);text-underline-offset:3px;align-self:flex-start;transition:color .15s ease;background:none;border:0;padding-left:0;padding-right:0;cursor:pointer;text-decoration:underline}
+.all:hover{color:#fff}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 30px;border:1px solid var(--steel);border-radius:999px;
+  background:transparent;color:var(--steel-text);font-family:var(--display);font-size:15px;letter-spacing:0.2em;text-decoration:none;
+  cursor:pointer;transition:background .15s ease,color .15s ease,opacity .15s ease;white-space:nowrap
+}
+.btn:hover:not(:disabled){background:var(--steel);color:var(--bg)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.quiet{border-color:var(--rule);color:var(--ink-2)}
+.btn.quiet:hover:not(:disabled){background:rgba(255,255,255,0.08);color:#fff}
+
+/* Home */
+.domain{display:grid;grid-template-columns:minmax(0,1fr) 72px;gap:8px 20px;align-items:center;padding:20px 0;border-top:1px solid var(--rule)}
+.domain:last-of-type{border-bottom:1px solid var(--rule)}
+.domain .name{font-size:17px;font-weight:400}
+.domain .score{font-family:var(--display);font-size:44px;line-height:1;text-align:right;grid-row:span 2}
+.domain.has-topics .score{grid-row:span 3}
+.domain.weak .score{color:var(--amber)}
+.domain .topics{font-size:14px;color:var(--ink-2)}
+.home-left{padding-top:37px}
+.center{align-items:center;gap:24px;text-align:center}
+.center h1{margin:0;font-family:var(--display);font-size:36px;font-weight:400;line-height:1.15;letter-spacing:0.02em}
+.ring{position:relative;width:400px;height:400px;flex:none}
+.ring svg{display:block;width:100%;height:100%}
+.ring .track{fill:none;stroke:rgba(255,255,255,0.14);stroke-width:1.5}
+.ring .fill{fill:none;stroke:var(--steel);stroke-width:1.5;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dasharray .8s cubic-bezier(.2,.7,.2,1)}
+.ring .tick{stroke:var(--ink);stroke-width:1.5}
+.ring .readout{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.ring .num{font-family:var(--display);font-size:160px;line-height:0.9;font-variant-numeric:tabular-nums}
+.ring .sub{font-size:15px;color:var(--ink-2)}
+.plan{margin:0;font-size:17px;line-height:1.5;color:rgba(255,255,255,0.9);max-width:360px;text-wrap:pretty}
+.begin{margin-top:auto;width:280px;min-height:54px;font-size:17px;letter-spacing:0.24em}
+.lesson{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:center;padding:20px 0;border-top:1px solid var(--rule);text-decoration:none;color:inherit}
+.lesson:last-of-type{border-bottom:1px solid var(--rule)}
+.thumb{height:80px;border:1px solid rgba(255,255,255,0.18);display:block}
+.thumb svg{display:block;width:100%;height:100%}
+.lesson .info{display:flex;flex-direction:column;gap:5px}
+.lesson .title{font-size:17px;font-weight:400;line-height:1.3;transition:color .15s ease}
+.lesson:hover .title{color:var(--steel-text)}
+.lesson .meta{font-size:14px;color:var(--ink-2)}
+
+/* Lessons list */
+.domains4{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:48px}
+.dom{display:flex;flex-direction:column;min-width:0}
+.dom-head{min-height:112px;align-content:end;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:end;padding-bottom:18px;border-bottom:1px solid var(--rule)}
+.dom-head h2{margin:0;font-size:17px;font-weight:400;line-height:1.3}
+.dom-head .score{font-family:var(--display);font-size:44px;line-height:1;grid-row:span 2}
+.dom.weak .dom-head .score{color:var(--amber)}
+.dom-head .meta{font-size:14px;color:var(--ink-2)}
+.dom .bar{margin-top:14px}
+.lrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:16px 0;border-bottom:1px solid var(--rule);text-decoration:none;color:inherit}
+.lrow .t{font-size:16px;font-weight:400;line-height:1.35;transition:color .15s ease}
+a.lrow:hover .t{color:var(--steel-text)}
+.lrow .m{font-size:14px;color:var(--ink-2);white-space:nowrap}
+.lrow .s{grid-column:1/-1;font-size:13px;color:var(--ink-2)}
+.lrow.done .t{color:var(--ink-2)}
+.lrow.gap .s{color:var(--amber)}
+.lrow .ready{color:var(--steel-text)}
+
+/* Lesson page */
+.lesson-view{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:64px}
+.crumb{grid-column:1/-1;font-size:14px;color:var(--ink-2);margin-bottom:-28px}
+.crumb a{color:var(--link);text-underline-offset:3px}
+.lede h1{margin:0 0 12px;font-family:var(--display);font-size:34px;font-weight:400;letter-spacing:0.02em;line-height:1.2}
+.lede .meta{font-size:14px;color:var(--ink-2);margin-bottom:28px}
+.lede .big-idea{font-size:21px;line-height:1.45;font-weight:400;margin:0 0 28px;padding:20px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);text-wrap:pretty}
+.points{list-style:none;margin:0 0 32px;padding:0;counter-reset:p}
+.points li{counter-increment:p;display:grid;grid-template-columns:36px minmax(0,1fr);gap:8px;padding:12px 0;font-size:16px;line-height:1.55;color:rgba(255,255,255,0.9)}
+.points li::before{content:counter(p,decimal-leading-zero);font-family:var(--display);font-size:15px;color:var(--steel);padding-top:2px}
+.points b{font-weight:500;color:#fff}
+.lesson-actions{display:flex;gap:14px;flex-wrap:wrap}
+.figure{border-top:1px solid var(--rule);padding-top:20px}
+.fig-label{font-family:var(--display);font-size:15px;letter-spacing:0.08em;margin:0 0 6px}
+.fig-help{font-size:14px;color:var(--ink-2);margin:0 0 22px;line-height:1.5}
+.slider{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center;margin-bottom:28px}
+.slider label{font-size:14px;color:var(--ink-2)}
+.slider output{font-family:var(--display);font-size:22px;min-width:120px;text-align:right}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:24px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:var(--track)}
+input[type=range]::-moz-range-track{height:2px;background:var(--track)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--bg);border:1.5px solid var(--steel);margin-top:-8px}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--bg);border:1.5px solid var(--steel)}
+.vap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px}
+.vap h3{margin:0 0 4px;font-size:16px;font-weight:400}
+.vap .kind{font-size:13px;color:var(--ink-2);margin-bottom:16px}
+.readrow{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;padding:12px 0;border-top:1px solid var(--rule);gap:12px}
+.readrow .k{font-size:14px;color:var(--ink-2)}
+.readrow .v{font-family:var(--display);font-size:26px;font-variant-numeric:tabular-nums}
+.readrow .v.amber{color:var(--amber)}
+.pp{margin:6px 0 4px;height:6px;background:var(--track);position:relative}
+.pp i{position:absolute;left:0;top:0;bottom:0;background:var(--steel);transition:width .2s ease}
+.pp.low i{background:var(--amber)}
+.pp b{position:absolute;top:-6px;bottom:-6px;width:1px;background:#fff}
+.verdict{font-size:14px;line-height:1.5;color:var(--ink-2);margin:10px 0 0}
+.verdict.amber{color:var(--amber)}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:3px;margin-bottom:22px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;border-radius:999px;padding:9px 18px;font-size:14px;color:var(--ink-2);cursor:pointer;min-height:40px}
+.seg button[aria-pressed="true"]{background:var(--steel);color:var(--bg);font-weight:500}
+.rank{list-style:none;margin:0;padding:0}
+.rank li{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:14px 0;border-top:1px solid var(--rule)}
+.rank li:last-child{border-bottom:1px solid var(--rule)}
+.rank .c{font-family:var(--display);font-size:30px;line-height:1}
+.rank .d{font-size:15px;line-height:1.45;color:rgba(255,255,255,0.9)}
+.rank .d small{display:block;font-size:13px;color:var(--ink-2);margin-top:2px}
+.rank .o{font-size:13px;color:var(--ink-2);white-space:nowrap}
+.rank li.best .c,.rank li.best .o{color:var(--steel-text)}
+.rank li.worst .c,.rank li.worst .o{color:var(--amber)}
+.strip svg{display:block;width:100%;height:auto}
+.strip .grid{stroke:rgba(255,255,255,0.07);stroke-width:1}
+.strip .lab{fill:rgba(255,255,255,0.7);font-size:11px;font-family:var(--text)}
+.strip .fhr{fill:none;stroke:var(--steel);stroke-width:2;stroke-linejoin:round}
+.strip .uc{fill:none;stroke:rgba(255,255,255,0.7);stroke-width:1.5}
+.strip .mark{stroke:var(--amber);stroke-width:1;stroke-dasharray:3 4}
+.decel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:20px}
+.decel div{border-top:1px solid var(--rule);padding-top:12px}
+.decel .k{font-size:13px;color:var(--ink-2);margin-bottom:4px}
+.decel .v{font-size:15px;line-height:1.45}
+
+/* Questions */
+.qhub{grid-template-columns:minmax(0,1fr)}
+.gapset{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;padding:22px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.gapset h2{margin:0 0 4px;font-size:18px;font-weight:400}
+.gapset p{margin:0;font-size:14px;color:var(--ink-2);line-height:1.5}
+.gapset .amber{color:var(--amber)}
+.qrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:14px 0;border-bottom:1px solid var(--rule)}
+.qrow .t{font-size:15px;font-weight:400}
+.qrow .m{font-size:14px;color:var(--ink-2)}
+.qrow.weak .m{color:var(--amber)}
+.dom .btn{margin-top:20px;align-self:flex-start;min-height:44px;padding:0 22px;font-size:13px}
+
+/* Question runner */
+.runner{grid-template-columns:minmax(0,760px);justify-content:center}
+.qhead{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.qhead .k{font-family:var(--display);font-size:15px;letter-spacing:0.1em}
+.qhead .r{font-size:14px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.qhead .timer{font-family:var(--display);font-size:20px;color:#fff;letter-spacing:0.06em}
+.qhead .timer.low{color:var(--amber)}
+.progress{height:2px;background:var(--track);margin-top:-1px}
+.progress i{display:block;height:100%;background:var(--steel);transition:width .3s ease}
+.qdom{font-size:13px;color:var(--ink-2);margin:28px 0 10px}
+.stem{font-size:20px;line-height:1.5;font-weight:400;margin:0 0 8px;text-wrap:pretty}
+.instr{font-size:14px;color:var(--steel-text);margin:0 0 22px}
+.opts{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;border:0}
+.opt{
+  display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;width:100%;
+  padding:15px 18px;border:1px solid var(--rule);border-radius:4px;background:transparent;cursor:pointer;font-size:16px;line-height:1.45;
+  transition:border-color .15s ease,background .15s ease
+}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,0.4)}
+.opt .l{font-family:var(--display);font-size:16px;color:var(--ink-2)}
+.opt[aria-pressed="true"]{border-color:var(--steel);background:rgba(255,255,255,0.05)}
+.opt[aria-pressed="true"] .l{color:var(--steel-text)}
+.opt:disabled{cursor:default}
+.opt .tag{font-size:13px;white-space:nowrap}
+.opt.right{border-color:var(--steel)}
+.opt.right .tag{color:var(--steel-text)}
+.opt.wrong{border-color:var(--amber)}
+.opt.wrong .tag,.opt.wrong .l{color:var(--amber)}
+.calc{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.calc input{width:160px;min-height:50px;padding:0 14px;background:transparent;border:1px solid var(--rule);border-radius:4px;color:#fff;font:inherit;font-size:20px}
+.calc input:focus{border-color:var(--steel);outline:none}
+.calc span{font-size:16px;color:var(--ink-2)}
+.calc-result{font-size:15px;margin:10px 0 0}
+.calc-result.right{color:var(--steel-text)}
+.calc-result.wrong{color:var(--amber)}
+.explain{margin-top:26px;padding:20px 0 0;border-top:1px solid var(--rule)}
+.explain .verdict-line{font-family:var(--display);font-size:18px;letter-spacing:0.06em;margin:0 0 10px}
+.explain .verdict-line.right{color:var(--steel-text)}
+.explain .verdict-line.wrong{color:var(--amber)}
+.explain p{margin:0;font-size:16px;line-height:1.6;color:rgba(255,255,255,0.9)}
+.qfoot{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:30px;flex-wrap:wrap}
+.qfoot .hint{font-size:14px;color:var(--ink-2);max-width:380px;line-height:1.45}
+
+/* Mock intro + results */
+.mock-intro{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px}
+.mock-intro h1{margin:0 0 18px;font-family:var(--display);font-size:36px;font-weight:400;letter-spacing:0.02em}
+.mock-intro .lead{font-size:18px;line-height:1.55;margin:0 0 28px;color:rgba(255,255,255,0.92);max-width:520px}
+.rules{list-style:none;margin:0 0 32px;padding:0}
+.rules li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;padding:14px 0;border-top:1px solid var(--rule);font-size:15px}
+.rules li:last-child{border-bottom:1px solid var(--rule)}
+.rules .v{color:var(--ink-2);text-align:right}
+.history .kv .v{font-family:var(--display);font-size:24px}
+.result-top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:40px;align-items:end;padding-bottom:28px;border-bottom:1px solid var(--rule)}
+.result-top .big{font-family:var(--display);font-size:120px;line-height:.85}
+.result-top .big small{font-size:40px;color:var(--ink-2)}
+.result-top p{margin:0;font-size:16px;line-height:1.55;color:var(--ink-2);max-width:420px}
+.review{list-style:none;margin:0;padding:0}
+.review li{border-bottom:1px solid var(--rule)}
+.review button{width:100%;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:14px;align-items:baseline;padding:16px 0;background:none;border:0;text-align:left;cursor:pointer;font-size:15px;line-height:1.45}
+.review .n{font-family:var(--display);color:var(--ink-2)}
+.review .st{font-size:13px;white-space:nowrap}
+.review .st.ok{color:var(--steel-text)}
+.review .st.no{color:var(--amber)}
+.review .detail{padding:0 0 18px 58px;font-size:15px;line-height:1.6;color:rgba(255,255,255,0.88)}
+.review .detail b{font-weight:500}
+
+/* Profile */
+.prof-id{align-items:center;text-align:center;gap:18px}
+.initials{width:160px;height:160px;border-radius:50%;border:1px solid var(--steel);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:56px;letter-spacing:0.08em}
+.prof-id h1{margin:0;font-family:var(--display);font-size:36px;font-weight:400;letter-spacing:0.02em}
+.prof-id .cred{font-size:16px;color:var(--ink-2)}
+.big{font-family:var(--display);font-size:120px;line-height:0.9;margin-top:18px}
+.big-sub{font-size:15px;color:var(--ink-2)}
+.kv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:18px 0;border-top:1px solid var(--rule)}
+.kv:last-child{border-bottom:1px solid var(--rule)}
+.kv .k{font-size:15px;color:var(--ink-2)}
+.kv .v{font-size:17px;font-weight:400;text-align:right}
+.kv .v.num{font-family:var(--display);font-size:28px;line-height:1}
+
+/* Footer */
+.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--rule);font-size:13px;color:rgba(255,255,255,0.62);line-height:1.5}
+.foot button{background:none;border:0;padding:0;color:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:13px}
+
+/* Responsive */
+@media (max-width:1279px){
+  .app{padding:0 32px 28px}
+  .domains4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .home-left{padding-top:0}
+  .main{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px}
+  .center{grid-column:1/-1;order:-1}
+  .begin{margin-top:8px}
+  .lesson-view,.mock-intro{grid-template-columns:minmax(0,1fr)}
+  .runner{grid-template-columns:minmax(0,760px)}
+}
+@media (max-width:900px){
+  .app{padding:0 20px 24px;gap:28px}
+  .top{grid-template-columns:1fr;height:auto;padding:18px 0 0;row-gap:10px}
+  .wordmark{font-size:15px}
+  .who{justify-self:start;font-size:13px;white-space:normal}
+  .nav{order:3;gap:22px;overflow-x:auto;scrollbar-width:none}
+  .nav a{min-height:44px;font-size:15px;white-space:nowrap}
+  .main,.qhub{grid-template-columns:minmax(0,1fr)}
+  .runner{grid-template-columns:minmax(0,1fr)}
+  .domains4{grid-template-columns:minmax(0,1fr)}
+  .dom-head{min-height:0}
+  .big{font-size:96px}
+  .ring{width:300px;height:300px}
+  .ring .num{font-size:120px}
+  .center h1,.page-head h1,.mock-intro h1{font-size:28px}
+  .lede h1{font-size:27px}
+  .vap,.decel{grid-template-columns:minmax(0,1fr);gap:24px}
+  .slider{grid-template-columns:minmax(0,1fr) auto}
+  .slider label{grid-column:1/-1}
+  .gapset{grid-template-columns:minmax(0,1fr)}
+  .gapset .btn{justify-self:start}
+  .result-top{grid-template-columns:minmax(0,1fr);gap:16px}
+  .result-top .big{font-size:96px}
+  .stem{font-size:18px}
+  .crumb{margin-bottom:-12px}
+}
+@media (prefers-reduced-motion:reduce){
+  .ring .fill,.bar i,.progress i,.pp i{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <a class="wordmark" href="#home" aria-label="Ether Education, home">ETHER EDUCATION</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#home" data-nav="home">Home</a>
+      <a href="#lessons" data-nav="lessons">Lessons</a>
+      <a href="#questions" data-nav="questions">Questions</a>
+      <a href="#mock" data-nav="mock">Mock NCE</a>
+    </nav>
+    <span class="who"><span id="days">34</span> days to the NCE · <a href="#profile" data-nav="profile" id="who-name">Maya Okafor</a></span>
+  </header>
+
+  <main class="main view" id="view-home">
+    <section class="col home-left" aria-label="Accuracy by NCE domain">
+      <div id="domains"></div>
+      <span class="note">Accuracy over the last 30 days. Amber is under 70%.</span>
+    </section>
+    <section class="col center" aria-labelledby="gap-line">
+      <h1 id="gap-line">7 Points Away</h1>
+      <div class="ring" role="img" id="ring" aria-label="Readiness 68 of 100, goal 75">
+        <svg viewBox="0 0 220 220" aria-hidden="true">
+          <circle class="track" cx="110" cy="110" r="92"></circle>
+          <circle class="fill" id="ring-fill" cx="110" cy="110" r="92" style="stroke-dasharray:0 578.1"></circle>
+          <line class="tick" x1="8" y1="110" x2="28" y2="110"></line>
+        </svg>
+        <div class="readout">
+          <span class="num" id="readiness">68</span>
+          <span class="sub">readiness, goal 75</span>
+        </div>
+      </div>
+      <p class="plan">Tonight, vaporizers and altitude. One diagram, four questions, about ten minutes.</p>
+      <a class="btn begin" href="#lesson/vapor">BEGIN</a>
+    </section>
+    <section class="col" aria-labelledby="lessons-h">
+      <h2 class="col-head" id="lessons-h">Short Lessons For Your Gaps</h2>
+      <div id="lesson-list"></div>
+      <a class="all" href="#lessons">Browse every lesson</a>
+    </section>
+  </main>
+
+  <main class="main view" id="view-lessons" hidden>
+    <div class="page-head">
+      <h1>Lessons</h1>
+      <p>Short visual lessons, grouped by the four NCE content domains. Amber marks lessons for topics under 70%.</p>
+    </div>
+    <div class="domains4" id="lesson-domains"></div>
+  </main>
+
+  <main class="main view lesson-view" id="view-lesson" hidden></main>
+
+  <main class="main view qhub" id="view-questions" hidden>
+    <div class="page-head">
+      <h1>Questions</h1>
+      <p>Practice sets with the answer and explanation after each question. Every item is written for Ether Education, not taken from a textbook or the NCE.</p>
+    </div>
+    <div class="gapset">
+      <div>
+        <h2>Gap set</h2>
+        <p>Questions from your two <span class="amber">amber</span> domains: equipment and technology, and surgery and special populations.</p>
+      </div>
+      <a class="btn" href="#practice/gaps">START GAP SET</a>
+    </div>
+    <div class="domains4" id="q-domains"></div>
+  </main>
+
+  <main class="main view runner" id="view-run" hidden><section class="col" id="run-root"></section></main>
+
+  <main class="main view mock-intro" id="view-mock" hidden></main>
+
+  <main class="main view" id="view-profile" hidden>
+    <section class="col" aria-labelledby="about-h">
+      <h2 class="col-head" id="about-h">About</h2>
+      <div id="prof-about"></div>
+    </section>
+    <section class="col prof-id">
+      <div class="initials" aria-hidden="true">MO</div>
+      <h1 id="prof-name">Maya Okafor</h1>
+      <span class="cred">SRNA, Class of 2027</span>
+      <span class="big" id="prof-days">34</span>
+      <span class="big-sub">days to the NCE</span>
+    </section>
+    <section class="col" aria-labelledby="record-h">
+      <h2 class="col-head" id="record-h">Study Record</h2>
+      <div id="prof-record"></div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>Ether Education prototype. The student, scores and history are sample data. Practice items are original and are not medical advice.</span>
+    <button type="button" id="reset">Reset my answers</button>
+  </footer>
+</div>
+
+<script>
+/* ---------- Content ---------- */
+const DOMAINS = {
+  bs: { name: 'Basic sciences', short: 'Basic sciences', accuracy: 78 },
+  eq: { name: 'Equipment, instrumentation and technology', short: 'Equipment and technology', accuracy: 54, topics: 'Vaporizers 41%, breathing circuits 48%' },
+  gp: { name: 'General principles of anesthesia', short: 'General principles', accuracy: 71 },
+  sp: { name: 'Anesthesia for surgical procedures and special populations', short: 'Surgery and special populations', accuracy: 63, topics: 'Obstetrics 57%, pediatric airway 60%' }
+};
+const ORDER = ['bs', 'eq', 'gp', 'sp'];
+const THRESHOLD = 70;
+
+const LESSONS = {
+  bs: [
+    { id: 'odc', title: 'The oxygen-hemoglobin dissociation curve', min: 5, status: 'done' },
+    { id: 'cap', title: 'Phases of the cardiac action potential', min: 6, status: 'done' },
+    { id: 'kid', title: 'How the kidney clears drugs', min: 4 },
+    { id: 'nmj', title: 'The neuromuscular junction', min: 5 }
+  ],
+  eq: [
+    { id: 'vapor', title: 'Why vaporizer output drifts at altitude', min: 4, status: 'gap', note: 'Vaporizers 41%', built: true },
+    { id: 'mapleson', title: 'The Mapleson circuits, A through F', min: 5, status: 'gap', note: 'Breathing circuits 48%', built: true },
+    { id: 'capno', title: 'Reading a capnogram', min: 5 },
+    { id: 'check', title: 'The anesthesia machine checkout', min: 6, status: 'done' }
+  ],
+  gp: [
+    { id: 'last', title: 'Local anesthetic systemic toxicity', min: 5, status: 'done' },
+    { id: 'mac', title: 'MAC and the volatile agents', min: 4, status: 'done' },
+    { id: 'rev', title: 'Reversing neuromuscular blockade', min: 6 },
+    { id: 'airx', title: 'The preoperative airway exam', min: 4 }
+  ],
+  sp: [
+    { id: 'fhr', title: 'Reading a fetal heart rate strip', min: 6, status: 'gap', note: 'Obstetrics 57%', built: true },
+    { id: 'peds', title: 'How the pediatric airway differs', min: 5, status: 'gap', note: 'Pediatric airway 60%' },
+    { id: 'olv', title: 'One-lung ventilation', min: 6 },
+    { id: 'older', title: 'Anesthesia for the older adult', min: 5, status: 'done' }
+  ]
+};
+const lessonById = id => { for (const d of ORDER) { const l = LESSONS[d].find(x => x.id === id); if (l) return { ...l, dom: d }; } return null; };
+
+// Original practice items. type: single | multi | calc
+const QS = [
+  { id: 'q1', dom: 'eq', topic: 'Vaporizers', type: 'single',
+    stem: 'A variable-bypass sevoflurane vaporizer is set to 2% in a city at 5,000 feet. Compared with sea level, what happens?',
+    opts: ['Volume percent output rises, partial pressure stays about the same, and the clinical effect is unchanged',
+           'Volume percent and partial pressure both rise, so the anesthetic is deeper',
+           'Volume percent stays at 2%, partial pressure falls, so the dial must be turned up',
+           'Volume percent and partial pressure both fall, so the patient may be underdosed'],
+    ans: 0,
+    why: 'Sevoflurane vapor pressure depends on temperature, not barometric pressure, and the bypass splits flow at a fixed ratio. The vaporizer keeps delivering roughly the same partial pressure, about 15 mmHg. At an ambient pressure near 630 mmHg that is about 2.4 vol%. Depth of anesthesia follows partial pressure, so the effect is unchanged. Option C describes a desflurane vaporizer, which holds a set volume percent.' },
+  { id: 'q2', dom: 'eq', topic: 'Vaporizers', type: 'single',
+    stem: 'At high altitude, a heated, pressurized desflurane vaporizer set to 6% delivers:',
+    opts: ['6 vol% at a lower partial pressure than at sea level', 'More than 6 vol% at the same partial pressure', '6 vol% at the same partial pressure as at sea level', 'Less than 6 vol% at a lower partial pressure'],
+    ans: 0,
+    why: 'The desflurane vaporizer injects vapor to hold the dialed volume percent. Partial pressure is volume percent times barometric pressure, so it falls as you climb. To match the sea-level effect, turn the dial up: required setting = desired % × 760 ÷ ambient pressure.' },
+  { id: 'q3', dom: 'eq', topic: 'Breathing circuits', type: 'single',
+    stem: 'Which Mapleson circuit needs the lowest fresh gas flow to prevent rebreathing during spontaneous ventilation?',
+    opts: ['Mapleson A', 'Mapleson B', 'Mapleson C', 'Mapleson D'],
+    ans: 0,
+    why: 'For spontaneous breathing the order is A, then D, F and E, then C, then B. Controlled ventilation flips it: D, F and E are most efficient and A is least. The Bain circuit is a coaxial Mapleson D.' },
+  { id: 'q4', dom: 'eq', topic: 'Capnography', type: 'single',
+    stem: 'Midway through a stable case, phase III of the capnogram changes from a flat plateau to a steady upslope. Nothing else changes. What is the most likely cause?',
+    opts: ['Bronchospasm or other expiratory obstruction', 'Esophageal intubation', 'Exhausted CO2 absorbent', 'A sudden fall in cardiac output'],
+    ans: 0,
+    why: 'An upsloping phase III, the "shark fin," means alveoli empty unevenly, as in bronchospasm or COPD. Exhausted absorbent raises the inspired baseline. A fall in cardiac output lowers end-tidal CO2 while the shape stays normal. Esophageal intubation gives no sustained waveform.' },
+  { id: 'q5', dom: 'bs', topic: 'Oxygen transport', type: 'multi', pick: 2,
+    stem: 'Which two shift the oxyhemoglobin dissociation curve to the left?',
+    opts: ['Hypothermia', 'Alkalosis', 'Increased 2,3-DPG', 'Hypercarbia', 'Hyperthermia'],
+    ans: [0, 1],
+    why: 'A left shift means higher hemoglobin affinity and a lower P50 (normal is about 27 mmHg). Cold, alkalosis, low 2,3-DPG, low CO2, carbon monoxide and fetal hemoglobin shift left. Heat, acidosis, high CO2 and more 2,3-DPG shift right and unload oxygen to tissue.' },
+  { id: 'q6', dom: 'bs', topic: 'Cardiac physiology', type: 'single',
+    stem: 'In a ventricular myocyte, the plateau (phase 2) of the action potential is held mainly by:',
+    opts: ['Calcium entering through L-type channels, balanced by potassium leaving', 'Rapid sodium entry through fast channels', 'Chloride entering the cell', 'The sodium-potassium pump'],
+    ans: 0,
+    why: 'Phase 0 is fast sodium entry. Phase 1 is a brief potassium outflow. Phase 2 is the plateau, where L-type calcium entry balances potassium outflow. Phase 3 is repolarization as potassium leaves. Phase 4 is the resting potential.' },
+  { id: 'q7', dom: 'bs', topic: 'Neuromuscular junction', type: 'single',
+    stem: 'In a healthy adult, an intubating dose of succinylcholine raises serum potassium by about:',
+    opts: ['0.5 mEq/L', '0.1 mEq/L', '2 mEq/L', '3 to 5 mEq/L'],
+    ans: 0,
+    why: 'Depolarization releases potassium and raises the level about 0.5 mEq/L. After burns, denervation, crush injury or long immobilization, extrajunctional receptors multiply, and the rise can be large enough to cause arrest. The risk starts roughly 24 to 48 hours after the injury.' },
+  { id: 'q8', dom: 'gp', topic: 'Neuromuscular reversal', type: 'single',
+    stem: 'Sugammadex reverses which of these neuromuscular blockers?',
+    opts: ['Vecuronium', 'Cisatracurium', 'Succinylcholine', 'Mivacurium'],
+    ans: 0,
+    why: 'Sugammadex is a cyclodextrin that encapsulates steroidal blockers. It binds rocuronium most tightly, then vecuronium. It has no effect on benzylisoquinolinium agents such as cisatracurium and mivacurium, or on succinylcholine.' },
+  { id: 'q9', dom: 'gp', topic: 'Local anesthetic toxicity', type: 'single',
+    stem: 'A patient arrests from local anesthetic systemic toxicity. Along with high-quality CPR and early lipid emulsion, which is recommended?',
+    opts: ['Reduce each epinephrine dose to 1 mcg/kg or less', 'Use vasopressin as the first-line vasopressor', 'Give propofol for seizures even if the patient is hypotensive', 'Treat ventricular arrhythmias with lidocaine'],
+    ans: 0,
+    why: 'Large epinephrine doses can worsen outcomes in this setting, so keep each dose small. Avoid vasopressin, calcium channel blockers, beta blockers and more local anesthetic. Benzodiazepines are preferred for seizures, since propofol depresses the heart. Start 20% lipid emulsion early.' },
+  { id: 'q10', dom: 'gp', topic: 'MAC', type: 'single',
+    stem: 'Which of these increases MAC?',
+    opts: ['Chronic alcohol use', 'Pregnancy', 'Hypothermia', 'Acute alcohol intoxication'],
+    ans: 0,
+    why: 'Chronic alcohol use, hyperthermia and hypernatremia raise MAC. Pregnancy, hypothermia, older age, acute intoxication and most sedatives lower it.' },
+  { id: 'q11', dom: 'sp', topic: 'Pediatric fluids', type: 'calc', unit: 'mL/hr',
+    stem: 'Using the 4-2-1 rule, what is the hourly maintenance fluid rate for a 25 kg child?',
+    ans: 65, tol: 0,
+    why: '4 mL/kg/hr for the first 10 kg (40), plus 2 mL/kg/hr for the next 10 kg (20), plus 1 mL/kg/hr for each kg above 20 (5). Total: 65 mL/hr.' },
+  { id: 'q12', dom: 'sp', topic: 'Obstetrics', type: 'single',
+    stem: 'Late decelerations on a fetal heart rate tracing most often reflect:',
+    opts: ['Uteroplacental insufficiency', 'Fetal head compression', 'Umbilical cord compression', 'A normal fetal sleep cycle'],
+    ans: 0,
+    why: 'Late decelerations are gradual and reach their lowest point after the peak of the contraction. They point to poor uteroplacental blood flow. Early decelerations mirror the contraction and come from head compression. Variable decelerations are abrupt and come from cord compression.' },
+  { id: 'q13', dom: 'sp', topic: 'Pediatric airway', type: 'single',
+    stem: 'Compared with an adult, the infant airway has:',
+    opts: ['A larger tongue for the size of the mouth', 'A lower larynx, near C5 to C6', 'A short, broad, stiff epiglottis', 'A wider subglottic airway relative to the glottis'],
+    ans: 0,
+    why: 'Infants have a large tongue, a large occiput, a higher larynx (around C3 to C4) and a long, floppy, omega-shaped epiglottis. A straight blade that lifts the epiglottis often gives the better view.' },
+  { id: 'q14', dom: 'sp', topic: 'Thoracic', type: 'single',
+    stem: 'Oxygen saturation falls during one-lung ventilation. What is the best first step?',
+    opts: ['Increase FiO2 to 1.0 and confirm tube position with a bronchoscope', 'Apply PEEP to the nondependent (operative) lung', 'Lower FiO2 to reduce absorption atelectasis', 'Increase tidal volume to 12 mL/kg'],
+    ans: 0,
+    why: 'Raise FiO2 and check the double-lumen tube with a bronchoscope first. Next, recruit the ventilated lung and add PEEP to it, then give CPAP to the operative lung. If saturation keeps falling, return to two-lung ventilation.' },
+  { id: 'q15', dom: 'sp', topic: 'Older adult', type: 'single',
+    stem: 'After age 40, MAC falls by roughly how much per decade?',
+    opts: ['6%', '1%', '15%', '25%'],
+    ans: 0,
+    why: 'MAC drops about 6% per decade after 40, so an 80-year-old needs roughly a quarter less volatile agent than a 40-year-old.' }
+];
+const qById = id => QS.find(q => q.id === id);
+
+const PROFILE_ABOUT = [
+  ['Credential', 'SRNA'], ['Program', 'Nurse anesthesia, DNP'], ['Cohort', 'Class of 2027'],
+  ['NCE date', 'Tue, Dec 29, 2026'], ['Readiness goal', '75'], ['Daily study target', '20 min']
+];
+const NCE_DATE = new Date('2026-12-29T09:00:00');
+
+/* ---------- Stored progress (this browser only) ---------- */
+const KEY = 'ether-education-v1';
+const store = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } })();
+store.answered ??= 0; store.correct ??= 0; store.mocks ??= []; store.lessons ??= [];
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch {} };
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const LETTERS = 'ABCDEFG';
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const fmtTime = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+const C = 2 * Math.PI * 92;
+function daysLeft() { return Math.max(0, Math.ceil((NCE_DATE - new Date()) / 86400000)); }
+function animateBars(root) {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    root.querySelectorAll('.bar i[data-w]').forEach(i => { i.style.width = i.dataset.w + '%'; });
+  }));
+}
+// Option order is shuffled per attempt; we keep a map back to the original index.
+function prepare(q) {
+  if (q.type === 'calc') return { q };
+  const order = shuffle(q.opts.map((_, i) => i));
+  return { q, order };
+}
+function isCorrect(item, pick) {
+  const q = item.q;
+  if (q.type === 'calc') return pick != null && Math.abs(Number(pick) - q.ans) <= (q.tol || 0);
+  if (q.type === 'multi') { const p = [...(pick || [])].sort(); return p.length === q.ans.length && p.every((v, i) => v === [...q.ans].sort()[i]); }
+  return pick === q.ans;
+}
+function answerText(q) {
+  if (q.type === 'calc') return `${q.ans} ${q.unit}`;
+  if (q.type === 'multi') return q.ans.map(i => q.opts[i]).join(' and ');
+  return q.opts[q.ans];
+}
+function pickText(q, pick) {
+  if (pick == null || (Array.isArray(pick) && !pick.length) || pick === '') return 'No answer';
+  if (q.type === 'calc') return `${pick} ${q.unit}`;
+  if (q.type === 'multi') return pick.map(i => q.opts[i]).join(' and ');
+  return q.opts[pick];
+}
+
+/* Small diagrams used as lesson thumbnails */
+const THUMBS = {
+  vapor: `<svg viewBox="0 0 120 80" aria-hidden="true"><path d="M8 66 C 40 64, 70 40, 112 14" fill="none" stroke="currentColor" stroke-opacity=".9" stroke-width="1.4"/><path d="M8 40 H112" stroke="currentColor" stroke-opacity=".45" stroke-dasharray="3 4"/><circle cx="8" cy="66" r="2" fill="currentColor"/><circle cx="112" cy="14" r="2" fill="currentColor"/></svg>`,
+  mapleson: `<svg viewBox="0 0 120 80" aria-hidden="true"><path d="M10 40 H96" stroke="currentColor" stroke-width="5" stroke-opacity=".35"/><circle cx="104" cy="40" r="9" fill="none" stroke="currentColor" stroke-opacity=".9"/><path d="M24 40 V22 M78 40 V58" stroke="currentColor" stroke-opacity=".9"/><circle cx="24" cy="20" r="3" fill="none" stroke="currentColor"/><path d="M74 60 h8" stroke="currentColor"/></svg>`,
+  fhr: `<svg viewBox="0 0 120 80" aria-hidden="true"><path d="M6 30 H40 C 52 30, 58 50, 70 50 C 82 50, 86 30, 98 30 H114" fill="none" stroke="currentColor" stroke-opacity=".9" stroke-width="1.4"/><path d="M6 70 H30 C 44 70, 46 54, 56 54 C 66 54, 70 70, 84 70 H114" fill="none" stroke="currentColor" stroke-opacity=".5"/></svg>`
+};
+const thumb = id => `<span class="thumb" style="color:var(--steel)">${THUMBS[id] || ''}</span>`;
+
+/* ---------- Home ---------- */
+function renderHome() {
+  const readiness = 68, goal = 75, gap = goal - readiness;
+  $('#readiness').textContent = readiness;
+  $('#gap-line').textContent = gap <= 0 ? 'On Target' : gap + (gap === 1 ? ' Point Away' : ' Points Away');
+  const doms = ORDER.map(k => ({ k, ...DOMAINS[k] })).sort((a, b) => a.accuracy - b.accuracy);
+  $('#domains').innerHTML = doms.map(d => {
+    const weak = d.accuracy < THRESHOLD;
+    return `<div class="domain${weak ? ' weak' : ''}${d.topics ? ' has-topics' : ''}">
+      <span class="name">${esc(d.short)}</span>
+      <span class="score" aria-label="${d.accuracy} percent">${d.accuracy}</span>
+      <div class="bar"><i data-w="${d.accuracy}"></i></div>
+      ${d.topics ? `<span class="topics">${esc(d.topics)}</span>` : ''}
+    </div>`;
+  }).join('');
+  const picks = [['vapor', 'equipment'], ['mapleson', 'equipment'], ['fhr', 'obstetrics']];
+  $('#lesson-list').innerHTML = picks.map(([id, tag]) => {
+    const l = lessonById(id);
+    return `<a class="lesson" href="#lesson/${id}">${thumb(id)}
+      <div class="info"><span class="title">${esc(l.title)}</span><span class="meta">${l.min} min, ${tag}</span></div></a>`;
+  }).join('');
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $('#ring-fill').style.strokeDasharray = (C * readiness / 100).toFixed(1) + ' ' + C.toFixed(1);
+  }));
+  animateBars($('#view-home'));
+}
+
+/* ---------- Lessons ---------- */
+function renderLessons() {
+  $('#lesson-domains').innerHTML = ORDER.map(k => {
+    const d = DOMAINS[k], weak = d.accuracy < THRESHOLD, list = LESSONS[k];
+    const done = list.filter(l => l.status === 'done' || store.lessons.includes(l.id)).length;
+    return `<section class="dom${weak ? ' weak' : ''}">
+      <div class="dom-head"><h2>${esc(d.name)}</h2>
+        <span class="score" aria-label="${d.accuracy} percent accuracy">${d.accuracy}</span>
+        <span class="meta">${done} of ${list.length} lessons finished</span></div>
+      <div class="bar"><i data-w="${d.accuracy}"></i></div>
+      ${list.map(l => {
+        const fin = l.status === 'done' || store.lessons.includes(l.id);
+        const cls = fin ? 'done' : (l.status || '');
+        const sub = fin ? 'Finished' : l.status === 'gap' ? `For your gap: ${esc(l.note)}` : '';
+        return `<a class="lrow ${cls}" href="#lesson/${l.id}"><span class="t">${esc(l.title)}</span><span class="m">${l.min} min</span>
+          ${sub ? `<span class="s">${sub}</span>` : ''}</a>`;
+      }).join('')}
+    </section>`;
+  }).join('');
+  animateBars($('#view-lessons'));
+}
+
+const LESSON_BODY = {
+  vapor: {
+    idea: 'Depth of anesthesia follows the partial pressure of the agent, not its volume percent.',
+    points: [
+      '<b>Variable-bypass vaporizers</b> (sevoflurane, isoflurane) split fresh gas at a fixed ratio. The vapor pressure of the agent depends on temperature, so the vaporizer keeps delivering about the same <b>partial pressure</b> at any altitude.',
+      'Because ambient pressure is lower, that same partial pressure is a <b>larger volume percent</b>. The gas analyzer reads higher, but the patient gets the same effect. No dial change is needed.',
+      '<b>Desflurane vaporizers</b> are heated and pressurized, and hold the dialed <b>volume percent</b>. At altitude the partial pressure falls, so you turn the dial up.',
+      'Required desflurane setting = desired % × 760 ÷ ambient pressure in mmHg.'
+    ],
+    figure: () => `
+      <h2 class="fig-label">Move The Altitude</h2>
+      <p class="fig-help">Watch what each vaporizer delivers. The white line on each bar is the sea-level partial pressure.</p>
+      <div class="slider">
+        <label for="alt">Altitude</label>
+        <input type="range" id="alt" min="0" max="12000" step="500" value="5000" aria-describedby="alt-out">
+        <output id="alt-out" for="alt">5,000 ft</output>
+      </div>
+      <div class="readrow" style="margin-bottom:28px"><span class="k">Ambient pressure</span><span class="v" id="pbar">632 mmHg</span></div>
+      <div class="vap">
+        <div>
+          <h3>Sevoflurane, dial at 2%</h3><div class="kind">Variable bypass</div>
+          <div class="readrow"><span class="k">Volume percent</span><span class="v" id="sevo-vol">2.4%</span></div>
+          <div class="readrow"><span class="k">Partial pressure</span><span class="v" id="sevo-pp">15.2 mmHg</span></div>
+          <div class="pp" id="sevo-bar"><i></i><b></b></div>
+          <p class="verdict" id="sevo-verdict"></p>
+        </div>
+        <div>
+          <h3>Desflurane, dial at 6%</h3><div class="kind">Heated, pressurized</div>
+          <div class="readrow"><span class="k">Volume percent</span><span class="v" id="des-vol">6.0%</span></div>
+          <div class="readrow"><span class="k">Partial pressure</span><span class="v" id="des-pp">37.9 mmHg</span></div>
+          <div class="pp" id="des-bar"><i></i><b></b></div>
+          <p class="verdict" id="des-verdict"></p>
+        </div>
+      </div>`,
+    mount() {
+      const alt = $('#alt');
+      const update = () => {
+        const ft = +alt.value, m = ft * 0.3048;
+        const p = 760 * Math.pow(1 - 2.25577e-5 * m, 5.25588);
+        const sevoPP = 0.02 * 760, desPP = 0.06 * p;
+        $('#alt-out').textContent = ft.toLocaleString() + ' ft';
+        $('#pbar').textContent = Math.round(p) + ' mmHg';
+        $('#sevo-vol').textContent = (sevoPP / p * 100).toFixed(1) + '%';
+        $('#sevo-pp').textContent = sevoPP.toFixed(1) + ' mmHg';
+        $('#des-vol').textContent = '6.0%';
+        $('#des-pp').textContent = desPP.toFixed(1) + ' mmHg';
+        const scale = v => (v / 50 * 100).toFixed(1) + '%';
+        $('#sevo-bar i').style.width = scale(sevoPP); $('#sevo-bar b').style.left = scale(15.2);
+        $('#des-bar i').style.width = scale(desPP); $('#des-bar b').style.left = scale(45.6);
+        const low = ft >= 1000;
+        $('#des-bar').classList.toggle('low', low);
+        $('#des-pp').classList.toggle('amber', low);
+        $('#sevo-verdict').textContent = 'Same partial pressure as at sea level. Same effect.';
+        const need = (6 * 760 / p).toFixed(1);
+        const v = $('#des-verdict');
+        v.textContent = low ? `Partial pressure is ${Math.round((1 - desPP / 45.6) * 100)}% lower. Dial about ${need}% to match sea level.` : 'At sea level, 6% is 45.6 mmHg.';
+        v.classList.toggle('amber', low);
+      };
+      alt.addEventListener('input', update); update();
+    }
+  },
+  mapleson: {
+    idea: 'Where fresh gas enters, relative to the valve, decides how much rebreathing you get.',
+    points: [
+      'Every Mapleson circuit has a reservoir, corrugated tubing, a fresh gas inlet and an APL (pop-off) valve. Only their positions differ.',
+      'With the <b>valve near the patient (A)</b>, exhaled dead-space gas leaves first during spontaneous breathing. That makes A the best choice for <b>spontaneous ventilation</b> and the worst for controlled.',
+      'With <b>fresh gas near the patient (D, E, F)</b>, fresh gas flushes exhaled gas toward the valve during the expiratory pause. That makes them best for <b>controlled ventilation</b>.',
+      'The <b>Bain circuit</b> is a coaxial Mapleson D: fresh gas runs through an inner tube inside the corrugated limb.',
+      'One memory aid: spontaneous is <b>A, D, C, B</b>; controlled is <b>D, B, C, A</b>. E and F sit with D.'
+    ],
+    figure: () => `
+      <h2 class="fig-label">Rank The Circuits</h2>
+      <p class="fig-help">Pick a breathing mode. Most efficient is at the top: it needs the least fresh gas flow to prevent rebreathing.</p>
+      <div class="seg" role="group" aria-label="Breathing mode">
+        <button type="button" data-mode="spont" aria-pressed="true">Spontaneous</button>
+        <button type="button" data-mode="ctrl" aria-pressed="false">Controlled</button>
+      </div>
+      <ol class="rank" id="rank"></ol>`,
+    mount() {
+      const INFO = {
+        A: ['Magill', 'Fresh gas at the bag end, valve at the patient.'],
+        B: ['', 'Fresh gas and valve both at the patient, bag at the far end.'],
+        C: ['', 'Like B with almost no tubing. Used for hand ventilation in transport.'],
+        D: ['Bain is a coaxial D', 'Fresh gas at the patient, valve at the bag end.'],
+        EF: ['Ayre T-piece, Jackson-Rees', 'E has no bag or valve. F adds an open-tailed bag. Common in small children.']
+      };
+      const draw = mode => {
+        const o = mode === 'spont' ? ['A', 'D', 'EF', 'C', 'B'] : ['D', 'EF', 'B', 'C', 'A'];
+        $('#rank').innerHTML = o.map((k, i) => {
+          const [alias, desc] = INFO[k];
+          const cls = i === 0 ? 'best' : i === o.length - 1 ? 'worst' : '';
+          const label = i === 0 ? 'Most efficient' : i === o.length - 1 ? 'Least efficient' : '';
+          return `<li class="${cls}"><span class="c">${k === 'EF' ? 'E, F' : k}</span>
+            <span class="d">${esc(desc)}${alias ? `<small>${esc(alias)}</small>` : ''}</span><span class="o">${label}</span></li>`;
+        }).join('');
+      };
+      document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+        document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b));
+        draw(b.dataset.mode);
+      }));
+      draw('spont');
+    }
+  },
+  fhr: {
+    idea: 'Read a deceleration by its timing against the contraction, then by its shape.',
+    points: [
+      '<b>Early</b>: gradual, a mirror image of the contraction, lowest point at the contraction peak. Head compression causes a vagal response. Benign.',
+      '<b>Variable</b>: abrupt drop of at least 15 bpm lasting 15 seconds to 2 minutes, with no fixed timing. Cord compression. Reposition the mother first.',
+      '<b>Late</b>: gradual, starts after the contraction begins and reaches its lowest point after the peak. Uteroplacental insufficiency.',
+      'For late decelerations after a neuraxial block, think <b>maternal hypotension</b>: left uterine displacement, fluids, a vasopressor such as phenylephrine, and stop oxytocin.'
+    ],
+    figure: () => `
+      <h2 class="fig-label">Compare The Patterns</h2>
+      <p class="fig-help">Top trace is fetal heart rate. Bottom trace is the contraction. The dashed line marks the contraction peak.</p>
+      <div class="seg" role="group" aria-label="Deceleration type">
+        <button type="button" data-d="early" aria-pressed="false">Early</button>
+        <button type="button" data-d="variable" aria-pressed="false">Variable</button>
+        <button type="button" data-d="late" aria-pressed="true">Late</button>
+      </div>
+      <div class="strip" role="img" id="strip-img" aria-label=""><svg viewBox="0 0 600 300" id="strip"></svg></div>
+      <div class="decel">
+        <div><div class="k">Timing</div><div class="v" id="d-time"></div></div>
+        <div><div class="k">Cause</div><div class="v" id="d-cause"></div></div>
+        <div><div class="k">Response</div><div class="v" id="d-resp"></div></div>
+      </div>`,
+    mount() {
+      const W = 600, x0 = 40, x1 = 590;
+      const fy = bpm => 20 + (170 - bpm) / 80 * 150; // 170 at top, 90 at bottom
+      const uy = v => 285 - v * 75;
+      const uc = t => Math.exp(-Math.pow((t - 60) / 16, 2));
+      const shapes = {
+        early: t => 140 - 22 * uc(t),
+        late: t => 140 - 24 * Math.exp(-Math.pow((t - 82) / 15, 2)),
+        variable: t => { const c = 46; if (t < c - 4 || t > c + 26) return 140; if (t < c) return 140 - 60 * (t - c + 4) / 4; if (t < c + 20) return 80 + (t - c) * 0.6; return 92 + (t - c - 20) * 8; }
+      };
+      const TEXT = {
+        early: ['Starts with the contraction, lowest point at its peak.', 'Fetal head compression, vagal.', 'None needed.', 'Early deceleration mirroring the contraction'],
+        variable: ['Abrupt, any time, not tied to the contraction.', 'Umbilical cord compression.', 'Reposition. Consider amnioinfusion if recurrent.', 'Variable deceleration with an abrupt V-shaped drop'],
+        late: ['Starts after the contraction begins, lowest point after its peak.', 'Uteroplacental insufficiency.', 'Left uterine displacement, fluids, treat hypotension, stop oxytocin.', 'Late deceleration with its lowest point after the contraction peak']
+      };
+      const svg = $('#strip');
+      const draw = d => {
+        const pts = [], ups = [];
+        for (let t = 0; t <= 120; t += 0.5) {
+          const x = x0 + (x1 - x0) * t / 120;
+          pts.push(`${x.toFixed(1)},${fy(shapes[d](t) + 2.5 * Math.sin(t * 2.1) * Math.sin(t * 0.7)).toFixed(1)}`);
+          ups.push(`${x.toFixed(1)},${uy(uc(t)).toFixed(1)}`);
+        }
+        const peakX = x0 + (x1 - x0) * 60 / 120;
+        let grid = '';
+        [160, 140, 120, 100].forEach(b => { grid += `<line class="grid" x1="${x0}" x2="${x1}" y1="${fy(b)}" y2="${fy(b)}"/><text class="lab" x="4" y="${fy(b) + 4}">${b}</text>`; });
+        svg.innerHTML = `${grid}
+          <line class="mark" x1="${peakX}" x2="${peakX}" y1="12" y2="290"/>
+          <polyline class="fhr" points="${pts.join(' ')}"/>
+          <line class="grid" x1="${x0}" x2="${x1}" y1="285" y2="285"/>
+          <polyline class="uc" points="${ups.join(' ')}"/>
+          <text class="lab" x="4" y="214">UC</text>`;
+        $('#d-time').textContent = TEXT[d][0]; $('#d-cause').textContent = TEXT[d][1]; $('#d-resp').textContent = TEXT[d][2];
+        $('#strip-img').setAttribute('aria-label', TEXT[d][3]);
+      };
+      document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+        document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b));
+        draw(b.dataset.d);
+      }));
+      draw('late');
+    }
+  }
+};
+
+function renderLesson(id) {
+  const l = lessonById(id), root = $('#view-lesson');
+  if (!l) { location.hash = '#lessons'; return; }
+  const d = DOMAINS[l.dom], body = LESSON_BODY[id];
+  const domQs = QS.filter(q => q.dom === l.dom).length;
+  const crumb = `<div class="crumb"><a href="#lessons">Lessons</a> · ${esc(d.short)}</div>`;
+  if (!body) {
+    root.innerHTML = `${crumb}
+      <section class="col lede"><h1>${esc(l.title)}</h1><div class="meta">${l.min} min, ${esc(d.short.toLowerCase())}</div>
+        <p class="big-idea">This lesson is outlined but not written yet. Three lessons are fully built in this prototype.</p>
+        <div class="lesson-actions">
+          <a class="btn" href="#lesson/vapor">OPEN A BUILT LESSON</a>
+          <a class="btn quiet" href="#practice/${l.dom}">PRACTICE ${domQs} QUESTIONS</a>
+        </div></section><section class="col"></section>`;
+    return;
+  }
+  const fin = store.lessons.includes(id);
+  root.innerHTML = `${crumb}
+    <section class="col lede">
+      <h1>${esc(l.title)}</h1>
+      <div class="meta">${l.min} min, ${esc(d.short.toLowerCase())}${l.note ? ` · <span style="color:var(--amber)">your accuracy: ${esc(l.note)}</span>` : ''}</div>
+      <p class="big-idea">${esc(body.idea)}</p>
+      <ol class="points">${body.points.map(p => `<li><span>${p}</span></li>`).join('')}</ol>
+      <div class="lesson-actions">
+        <a class="btn" id="finish" href="#practice/${l.dom}">${fin ? 'PRACTICE AGAIN' : 'FINISH AND PRACTICE'}</a>
+        <a class="btn quiet" href="#lessons">ALL LESSONS</a>
+      </div>
+    </section>
+    <section class="col figure">${body.figure()}</section>`;
+  body.mount();
+  $('#finish').addEventListener('click', () => { if (!store.lessons.includes(id)) { store.lessons.push(id); save(); } });
+}
+
+/* ---------- Questions hub ---------- */
+function renderQuestions() {
+  $('#q-domains').innerHTML = ORDER.map(k => {
+    const d = DOMAINS[k], weak = d.accuracy < THRESHOLD, qs = QS.filter(q => q.dom === k);
+    const topics = [...new Set(qs.map(q => q.topic))];
+    return `<section class="dom${weak ? ' weak' : ''}">
+      <div class="dom-head"><h2>${esc(d.name)}</h2>
+        <span class="score" aria-label="${d.accuracy} percent accuracy">${d.accuracy}</span>
+        <span class="meta">${qs.length} questions in this prototype</span></div>
+      <div class="bar"><i data-w="${d.accuracy}"></i></div>
+      ${topics.map(t => `<div class="qrow"><span class="t">${esc(t)}</span><span class="m">${qs.filter(q => q.topic === t).length}</span></div>`).join('')}
+      <a class="btn quiet" href="#practice/${k}">PRACTICE</a>
+    </section>`;
+  }).join('');
+  animateBars($('#view-questions'));
+}
+
+/* ---------- Runner (practice and mock) ---------- */
+let run = null; // { mode: 'practice'|'mock', items, i, picks[], locked[], start, limit, timer, label, back }
+
+function startPractice(key) {
+  const pool = key === 'gaps' ? QS.filter(q => q.dom === 'eq' || q.dom === 'sp') : QS.filter(q => q.dom === key);
+  if (!pool.length) { location.hash = '#questions'; return; }
+  const label = key === 'gaps' ? 'Gap set' : DOMAINS[key].short;
+  run = { mode: 'practice', key, label, items: shuffle(pool).slice(0, 6).map(prepare), i: 0, picks: [], locked: [], start: Date.now() };
+  drawRun();
+}
+function startMock() {
+  const per = { bs: 2, eq: 3, gp: 2, sp: 3 };
+  let items = [];
+  ORDER.forEach(k => { items = items.concat(shuffle(QS.filter(q => q.dom === k)).slice(0, per[k])); });
+  run = { mode: 'mock', label: 'Mock NCE', items: shuffle(items).map(prepare), i: 0, picks: [], locked: [], start: Date.now(), limit: 15 * 60 };
+  clearInterval(run.timer);
+  run.timer = setInterval(tick, 1000);
+  location.hash = '#mock/run';
+}
+function stopRun() { if (run && run.timer) clearInterval(run.timer); }
+function remaining() { return Math.max(0, run.limit - Math.floor((Date.now() - run.start) / 1000)); }
+function tick() {
+  if (!run || run.mode !== 'mock') return;
+  const r = remaining(), el = $('#timer');
+  if (el) { el.textContent = fmtTime(r); el.classList.toggle('low', r <= 120); }
+  if (r === 0) finishMock(true);
+}
+
+function hasPick(p) { return p != null && p !== '' && !(Array.isArray(p) && p.length === 0); }
+
+function drawRun() {
+  const root = $('#run-root'), item = run.items[run.i], q = item.q, i = run.i, n = run.items.length;
+  const mock = run.mode === 'mock', locked = !!run.locked[i], pick = run.picks[i];
+  const shown = locked && !mock;
+  let body = '';
+  if (q.type === 'calc') {
+    const ok = shown && isCorrect(item, pick);
+    body = `<div class="calc"><input id="calc" type="number" inputmode="decimal" step="any" aria-label="Your answer in ${esc(q.unit)}" value="${hasPick(pick) ? esc(pick) : ''}" ${locked ? 'disabled' : ''}><span>${esc(q.unit)}</span></div>
+      ${shown ? `<p class="calc-result ${ok ? 'right' : 'wrong'}">${ok ? 'Correct.' : `The answer is ${esc(answerText(q))}.`}</p>` : ''}`;
+  } else {
+    const multi = q.type === 'multi';
+    body = `<div class="opts" role="group" aria-label="Answer choices">${item.order.map((orig, pos) => {
+      const sel = multi ? (pick || []).includes(orig) : pick === orig;
+      let cls = '', tag = '';
+      if (shown) {
+        const right = multi ? q.ans.includes(orig) : q.ans === orig;
+        if (right) { cls = 'right'; tag = sel ? 'Your answer, correct' : 'Correct answer'; }
+        else if (sel) { cls = 'wrong'; tag = 'Your answer'; }
+      }
+      return `<button type="button" class="opt ${cls}" data-o="${orig}" aria-pressed="${sel}" ${locked ? 'disabled' : ''}>
+        <span class="l">${LETTERS[pos]}</span><span>${esc(q.opts[orig])}</span><span class="tag">${tag}</span></button>`;
+    }).join('')}</div>`;
+  }
+  const instr = q.type === 'multi' ? `Select ${q.pick}.` : q.type === 'calc' ? 'Type a number.' : 'Select one.';
+  const ok = shown && isCorrect(item, pick);
+  const explain = shown ? `<div class="explain" aria-live="polite"><p class="verdict-line ${ok ? 'right' : 'wrong'}">${ok ? 'Correct' : 'Not quite'}</p><p>${esc(q.why)}</p></div>` : '';
+  const last = i === n - 1;
+  let primary, hint = '';
+  if (mock) {
+    primary = `<button type="button" class="btn" id="submit" ${hasPick(pick) ? '' : 'disabled'}>${last ? 'SUBMIT AND FINISH' : 'SUBMIT ANSWER'}</button>`;
+    hint = 'Submitting is final. Like the NCE, you cannot go back or flag a question.';
+  } else if (!locked) {
+    primary = `<button type="button" class="btn" id="check" ${hasPick(pick) ? '' : 'disabled'}>CHECK ANSWER</button>`;
+  } else {
+    primary = `<button type="button" class="btn" id="next">${last ? 'SEE RESULTS' : 'NEXT QUESTION'}</button>`;
+  }
+  const right = mock ? `<span class="timer" id="timer" aria-label="Time remaining">${fmtTime(remaining())}</span>`
+    : `<span class="r">${run.locked.filter(Boolean).length ? `${run.items.filter((it, k) => run.locked[k] && isCorrect(it, run.picks[k])).length} correct so far` : ''}</span>`;
+  root.innerHTML = `
+    <div class="qhead"><span class="k">${esc(run.label.toUpperCase())} · ${i + 1} OF ${n}</span>${right}</div>
+    <div class="progress"><i style="width:${(i / n * 100).toFixed(1)}%"></i></div>
+    <div class="qdom">${esc(DOMAINS[q.dom].short)} · ${esc(q.topic)}</div>
+    <p class="stem" id="stem">${esc(q.stem)}</p>
+    <p class="instr">${instr}</p>
+    ${body}
+    ${explain}
+    <div class="qfoot">${mock ? `<span class="hint">${hint}</span>` : `<a class="all" href="#questions" style="padding-top:0">End set</a>`}${primary}</div>`;
+
+  root.querySelectorAll('.opt:not(:disabled)').forEach(b => b.addEventListener('click', () => {
+    const o = +b.dataset.o;
+    if (q.type === 'multi') {
+      const cur = new Set(run.picks[i] || []);
+      if (cur.has(o)) cur.delete(o); else { if (cur.size >= q.pick) cur.delete([...cur][0]); cur.add(o); }
+      run.picks[i] = [...cur];
+    } else run.picks[i] = o;
+    drawRun();
+    const again = root.querySelector(`.opt[data-o="${o}"]`); if (again) again.focus();
+  }));
+  const calc = $('#calc');
+  if (calc && !locked) {
+    calc.addEventListener('input', () => {
+      run.picks[i] = calc.value;
+      const btn = $('#submit') || $('#check'); if (btn) btn.disabled = !hasPick(calc.value);
+    });
+    calc.addEventListener('keydown', e => { if (e.key === 'Enter') { const btn = $('#submit') || $('#check'); if (btn && !btn.disabled) btn.click(); } });
+    calc.focus();
+  }
+  const on = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+  on('check', () => {
+    run.locked[i] = true; store.answered++; if (isCorrect(item, run.picks[i])) store.correct++; save();
+    drawRun(); const nx = $('#next'); if (nx) nx.focus();
+  });
+  on('next', () => { if (last) drawPracticeResults(); else { run.i++; drawRun(); $('#stem').focus?.(); window.scrollTo(0, 0); } });
+  on('submit', () => {
+    run.locked[i] = true;
+    if (last) finishMock(false); else { run.i++; drawRun(); window.scrollTo(0, 0); }
+  });
+}
+
+function reviewList(items, picks) {
+  return `<ol class="review">${items.map((it, k) => {
+    const q = it.q, ok = isCorrect(it, picks[k]);
+    return `<li><button type="button" aria-expanded="false" data-k="${k}"><span class="n">${String(k + 1).padStart(2, '0')}</span>
+      <span>${esc(q.stem)}</span><span class="st ${ok ? 'ok' : 'no'}">${ok ? 'Correct' : 'Missed'}</span></button>
+      <div class="detail" hidden><p style="margin:0 0 8px">Your answer: <b>${esc(pickText(q, picks[k]))}</b><br>Correct answer: <b>${esc(answerText(q))}</b></p><p style="margin:0">${esc(q.why)}</p></div></li>`;
+  }).join('')}</ol>`;
+}
+function wireReview(root) {
+  root.querySelectorAll('.review button').forEach(b => b.addEventListener('click', () => {
+    const open = b.getAttribute('aria-expanded') === 'true';
+    b.setAttribute('aria-expanded', !open); b.nextElementSibling.hidden = open;
+  }));
+}
+function drawPracticeResults() {
+  const n = run.items.length, c = run.items.filter((it, k) => isCorrect(it, run.picks[k])).length;
+  const root = $('#run-root');
+  root.innerHTML = `
+    <div class="qhead"><span class="k">${esc(run.label.toUpperCase())} · RESULTS</span><span class="r">${fmtTime(Math.floor((Date.now() - run.start) / 1000))} spent</span></div>
+    <div class="result-top" style="margin-top:28px"><span class="big">${c}<small>/${n}</small></span>
+      <p>${c === n ? 'Every question right. Move on to another domain or take the mock.' : 'Open any missed question below to read the explanation again.'}</p></div>
+    ${reviewList(run.items, run.picks)}
+    <div class="qfoot"><a class="all" href="#questions" style="padding-top:0">Back to questions</a><button type="button" class="btn" id="again">NEW SET</button></div>`;
+  wireReview(root);
+  $('#again').addEventListener('click', () => startPractice(run.key));
+}
+
+function finishMock(timedOut) {
+  stopRun();
+  const n = run.items.length, c = run.items.filter((it, k) => isCorrect(it, run.picks[k])).length;
+  store.answered += run.locked.filter(Boolean).length; store.correct += c;
+  store.mocks.push({ score: Math.round(c / n * 100), at: Date.now() }); save();
+  run.done = { c, n, timedOut, secs: Math.min(run.limit, Math.floor((Date.now() - run.start) / 1000)) };
+  location.hash = '#mock/results';
+}
+function drawMockResults() {
+  const root = $('#run-root'), { c, n, timedOut, secs } = run.done;
+  const by = ORDER.map(k => { const ks = run.items.map((it, j) => j).filter(j => run.items[j].q.dom === k); return [k, ks.filter(j => isCorrect(run.items[j], run.picks[j])).length, ks.length]; });
+  root.innerHTML = `
+    <div class="qhead"><span class="k">MOCK NCE · RESULTS</span><span class="r">${timedOut ? 'Time ran out' : fmtTime(secs) + ' used of 15:00'}</span></div>
+    <div class="result-top" style="margin-top:28px"><span class="big">${c}<small>/${n}</small></span>
+      <p>A short sample, so treat this as practice, not a prediction. The NCE reports pass or fail, not a percentage.</p></div>
+    <div style="margin:8px 0 28px">${by.map(([k, ok, t]) => {
+      const pct = t ? Math.round(ok / t * 100) : 0, weak = pct < THRESHOLD;
+      return `<div class="domain${weak ? ' weak' : ''}"><span class="name">${esc(DOMAINS[k].short)}</span><span class="score">${ok}/${t}</span><div class="bar"><i data-w="${pct}"></i></div></div>`;
+    }).join('')}</div>
+    <h2 class="col-head" style="padding-top:8px">Review</h2>
+    ${reviewList(run.items, run.picks)}
+    <div class="qfoot"><a class="all" href="#home" style="padding-top:0">Back to home</a><a class="btn" href="#mock">DONE</a></div>`;
+  wireReview(root); animateBars(root);
+}
+
+function renderMockIntro() {
+  const hist = store.mocks.slice(-4).reverse();
+  $('#view-mock').innerHTML = `
+    <section class="col">
+      <h1>Mock NCE</h1>
+      <p class="lead">A short timed sample that behaves like the real exam: one question at a time, and no feedback until the end.</p>
+      <ul class="rules">
+        <li><span>Questions</span><span class="v">10, across all four domains</span></li>
+        <li><span>Time</span><span class="v">15 minutes</span></li>
+        <li><span>Going back</span><span class="v">Not allowed</span></li>
+        <li><span>Flagging for review</span><span class="v">Not allowed</span></li>
+        <li><span>Formats</span><span class="v">Single answer, select two, calculation</span></li>
+      </ul>
+      <div><button type="button" class="btn" id="start-mock">START MOCK</button></div>
+      <p class="note">The real NCE is computer-adaptive: 100 to 170 questions in up to 3 hours. A full-length mock comes once the question bank is large enough.</p>
+    </section>
+    <section class="col history">
+      <h2 class="col-head">Your Mocks</h2>
+      ${hist.length ? hist.map(m => `<div class="kv"><span class="k">${new Date(m.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}, ${new Date(m.at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</span><span class="v${m.score < THRESHOLD ? '" style="color:var(--amber)' : ''}">${m.score}%</span></div>`).join('')
+        : `<p class="note" style="padding-top:0">No mocks yet. Your scores will show here, saved in this browser only.</p>`}
+    </section>`;
+  $('#start-mock').addEventListener('click', startMock);
+}
+
+/* ---------- Profile ---------- */
+function renderProfile() {
+  const kv = rows => rows.map(([k, v]) => `<div class="kv"><span class="k">${esc(k)}</span><span class="v${/^[\d,]+%?$/.test(v) ? ' num' : ''}">${esc(v)}</span></div>`).join('');
+  const baseAns = 1284, baseCor = 847;
+  const ans = baseAns + store.answered, cor = baseCor + store.correct;
+  const finished = new Set([...ORDER.flatMap(k => LESSONS[k].filter(l => l.status === 'done').map(l => l.id)), ...store.lessons]).size;
+  const lastMock = store.mocks.length ? store.mocks[store.mocks.length - 1].score + '%' : 'None yet';
+  $('#prof-about').innerHTML = kv(PROFILE_ABOUT);
+  $('#prof-record').innerHTML = kv([
+    ['Readiness now', '68'], ['Questions answered', ans.toLocaleString()], ['Overall accuracy', Math.round(cor / ans * 100) + '%'],
+    ['Lessons finished', `${finished} of 16`], ['Last mock', lastMock]
+  ]);
+}
+
+/* ---------- Router ---------- */
+function show(id) { document.querySelectorAll('.view').forEach(el => { el.hidden = el.id !== 'view-' + id; }); }
+function setNav(key) {
+  document.querySelectorAll('[data-nav]').forEach(a => { if (a.dataset.nav === key) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+}
+function route() {
+  const [a, b] = location.hash.slice(1).split('/');
+  const dl = daysLeft(); $('#days').textContent = dl; $('#prof-days').textContent = dl;
+  // Leaving a mock in progress abandons it.
+  if (run && run.mode === 'mock' && !run.done && !(a === 'mock' && b === 'run')) { stopRun(); run = null; }
+  window.scrollTo(0, 0);
+  switch (a) {
+    case 'lessons': setNav('lessons'); renderLessons(); show('lessons'); break;
+    case 'lesson': setNav('lessons'); show('lesson'); renderLesson(b); break;
+    case 'questions': setNav('questions'); renderQuestions(); show('questions'); break;
+    case 'practice': setNav('questions'); show('run'); startPractice(b); break;
+    case 'mock':
+      setNav('mock');
+      if (b === 'run' && run && run.mode === 'mock' && !run.done) { show('run'); drawRun(); }
+      else if (b === 'results' && run && run.done) { show('run'); drawMockResults(); }
+      else { if (b) { history.replaceState(null, '', '#mock'); } renderMockIntro(); show('mock'); }
+      break;
+    case 'profile': setNav('profile'); renderProfile(); show('profile'); break;
+    default: setNav('home'); renderHome(); show('home');
+  }
+}
+window.addEventListener('hashchange', route);
+window.addEventListener('beforeunload', e => { if (run && run.mode === 'mock' && !run.done) { e.preventDefault(); e.returnValue = ''; } });
+$('#reset').addEventListener('click', () => {
+  store.answered = 0; store.correct = 0; store.mocks = []; store.lessons = []; save(); route();
+});
+route();
+</script>
+</body>
+</html>
