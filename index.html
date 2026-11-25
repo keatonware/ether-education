@@ -388,8 +388,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
       <div id="domains"></div>
       <span class="note">Accuracy over the last 30 days. Amber is under 70%.</span>
     </section>
-    <section class="col center" aria-labelledby="gap-line">
-      <h1 id="gap-line">7 Points Away</h1>
+    <section class="col center" aria-label="Readiness">
       <div class="ring" role="img" id="ring" aria-label="Readiness 68 of 100, goal 75">
         <svg viewBox="0 0 220 220" aria-hidden="true">
           <circle class="track" cx="110" cy="110" r="92"></circle>
@@ -401,7 +400,6 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
           <span class="sub">readiness, goal 75</span>
         </div>
       </div>
-      <p class="plan">Tonight, vaporizers and altitude. One diagram, four questions, about ten minutes.</p>
       <a class="btn begin" href="#lesson/vapor">BEGIN</a>
     </section>
     <section class="col" aria-labelledby="lessons-h">
@@ -744,7 +742,6 @@ const thumb = id => `<span class="thumb" style="color:var(--steel)">${THUMBS[id]
 function renderHome() {
   const readiness = 68, goal = 75, gap = goal - readiness;
   $('#readiness').textContent = readiness;
-  $('#gap-line').textContent = gap <= 0 ? 'On Target' : gap + (gap === 1 ? ' Point Away' : ' Points Away');
   const doms = ORDER.map(k => ({ k, ...DOMAINS[k] })).sort((a, b) => a.accuracy - b.accuracy);
   $('#domains').innerHTML = doms.map(d => {
     const weak = d.accuracy < THRESHOLD;
