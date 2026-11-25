@@ -222,6 +222,19 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .qrow.weak .m{color:var(--amber)}
 .dom .btn{margin-top:20px;align-self:flex-start;min-height:44px;padding:0 22px;font-size:13px}
 
+/* Questions hub */
+.qotd{grid-column:1/-1;max-width:860px;padding:26px 0 40px;border-top:1px solid var(--rule)}
+.qd-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.qd-k{font-family:var(--display);font-size:16px;letter-spacing:0.14em;text-transform:uppercase;color:var(--steel-text)}
+.qd-d{font-size:14px;color:var(--ink-2)}
+.qotd .qdom{margin-top:18px}
+.sname small{display:block;font-size:13px;font-weight:300;color:var(--ink-2);margin-top:3px}
+.mock-panel{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:56px;padding:24px 0 8px;border-top:1px solid var(--rule)}
+.mock-panel .lead{font-size:17px;line-height:1.55;margin:0 0 22px;color:rgba(255,255,255,0.92);max-width:520px}
+.mock-panel .rules{margin-bottom:24px}
+.mock-panel .history .kv .v{font-family:var(--display);font-size:24px}
+@media (max-width:900px){.mock-panel{grid-template-columns:minmax(0,1fr);gap:28px}}
+
 /* Question runner */
 .runner{grid-template-columns:minmax(0,760px);justify-content:center}
 .qhead{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
@@ -366,7 +379,6 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
       <a href="#home" data-nav="home">Home</a>
       <a href="#lessons" data-nav="lessons">Lessons</a>
       <a href="#questions" data-nav="questions">Questions</a>
-      <a href="#mock" data-nav="mock">Mock NCE</a>
     </nav>
     <span class="who"><span id="days">34</span> days to the NCE · <a href="#profile" data-nav="profile" id="who-name">Maya Okafor</a></span>
   </header>
@@ -409,23 +421,12 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   <main class="main view lesson-view" id="view-lesson" hidden></main>
 
   <main class="main view qhub" id="view-questions" hidden>
-    <div class="page-head">
-      <h1>Questions</h1>
-      <p>Practice sets with the answer and explanation after each question. Every item is written for Ether Education, not taken from a textbook or the NCE.</p>
-    </div>
-    <div class="gapset">
-      <div>
-        <h2>Gap set</h2>
-        <p>Questions from your two <span class="amber">amber</span> domains: equipment and technology, and surgery and special populations.</p>
-      </div>
-      <a class="btn" href="#practice/gaps">START GAP SET</a>
-    </div>
-    <div class="domains4" id="q-domains"></div>
+    <div class="page-head"><h1>Questions</h1></div>
+    <section class="qotd" id="qotd" aria-label="Question of the day"></section>
+    <div class="lessons-list" id="q-list"></div>
   </main>
 
   <main class="main view runner" id="view-run" hidden><section class="col" id="run-root"></section></main>
-
-  <main class="main view mock-intro" id="view-mock" hidden></main>
 
   <main class="main view" id="view-profile" hidden>
     <section class="col" aria-labelledby="about-h">
@@ -1013,20 +1014,114 @@ function renderLesson(id) {
 }
 
 /* ---------- Questions hub ---------- */
-function renderQuestions() {
-  $('#q-domains').innerHTML = ORDER.map(k => {
-    const d = DOMAINS[k], weak = d.accuracy < THRESHOLD, qs = QS.filter(q => q.dom === k);
-    const topics = [...new Set(qs.map(q => q.topic))];
-    return `<section class="dom${weak ? ' weak' : ''}">
-      <div class="dom-head"><h2>${esc(d.name)}</h2>
-        <span class="score" aria-label="${d.accuracy} percent accuracy">${d.accuracy}</span>
-        <span class="meta">${qs.length} questions in this prototype</span></div>
-      <div class="bar"><i data-w="${d.accuracy}"></i></div>
-      ${topics.map(t => `<div class="qrow"><span class="t">${esc(t)}</span><span class="m">${qs.filter(q => q.topic === t).length}</span></div>`).join('')}
-      <a class="btn quiet" href="#practice/${k}">PRACTICE</a>
-    </section>`;
+const MOCKS = {
+  see: { label: 'Mock SEE', per: { bs: 3, eq: 3, gp: 3, sp: 3 }, mins: 18,
+    lead: 'A short timed sample in the style of the Self-Evaluation Exam you take during your program.',
+    note: 'The real SEE is 240 questions in up to 4 hours. A full-length mock comes once the question bank is large enough.' },
+  nce: { label: 'Mock NCE', per: { bs: 2, eq: 3, gp: 2, sp: 3 }, mins: 15,
+    lead: 'A short timed sample that behaves like the board exam: one question at a time, and no feedback until the end.',
+    note: 'The real NCE is computer-adaptive: 100 to 170 questions in up to 3 hours. A full-length mock comes once the question bank is large enough.' }
+};
+const mockCount = k => Object.values(MOCKS[k].per).reduce((a, b) => a + b, 0);
+
+function qotdItem() {
+  const today = new Date(), key = today.toISOString().slice(0, 10);
+  const start = new Date(today.getFullYear(), 0, 0), day = Math.floor((today - start) / 86400000);
+  const q = QS[day % QS.length];
+  if (!store.qotd || store.qotd.key !== key) { store.qotd = { key, pick: null, done: false }; save(); }
+  return { q, key, state: store.qotd };
+}
+function renderQotd() {
+  const { q, state } = qotdItem(), item = { q };
+  const done = state.done, pick = state.pick;
+  let body;
+  if (q.type === 'calc') {
+    const ok = done && isCorrect(item, pick);
+    body = `<div class="calc"><input id="qd-calc" type="number" inputmode="decimal" step="any" aria-label="Your answer in ${esc(q.unit)}" value="${hasPick(pick) ? esc(pick) : ''}" ${done ? 'disabled' : ''}><span>${esc(q.unit)}</span></div>
+      ${done ? `<p class="calc-result ${ok ? 'right' : 'wrong'}">${ok ? 'Correct.' : `The answer is ${esc(answerText(q))}.`}</p>` : ''}`;
+  } else {
+    const multi = q.type === 'multi';
+    body = `<div class="opts" role="group" aria-label="Answer choices">${q.opts.map((t, o) => {
+      const sel = multi ? (pick || []).includes(o) : pick === o;
+      let cls = '', tag = '';
+      if (done) {
+        const right = multi ? q.ans.includes(o) : q.ans === o;
+        if (right) { cls = 'right'; tag = sel ? 'Your answer, correct' : 'Correct answer'; } else if (sel) { cls = 'wrong'; tag = 'Your answer'; }
+      }
+      return `<button type="button" class="opt ${cls}" data-o="${o}" aria-pressed="${sel}" ${done ? 'disabled' : ''}><span class="l">${LETTERS[o]}</span><span>${esc(t)}</span><span class="tag">${tag}</span></button>`;
+    }).join('')}</div>`;
+  }
+  const ok = done && isCorrect(item, pick);
+  $('#qotd').innerHTML = `
+    <div class="qd-head"><span class="qd-k">Question of the day</span><span class="qd-d">${new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</span></div>
+    <div class="qdom">${esc(DOMAINS[q.dom].short)} · ${esc(q.topic)}</div>
+    <p class="stem">${esc(q.stem)}</p>
+    <p class="instr">${q.type === 'multi' ? `Select ${q.pick}.` : q.type === 'calc' ? 'Type a number.' : 'Select one.'}</p>
+    ${body}
+    ${done ? `<div class="explain" aria-live="polite"><p class="verdict-line ${ok ? 'right' : 'wrong'}">${ok ? 'Correct' : 'Not quite'}</p><p>${esc(q.why)}</p></div>
+      <p class="note">A new question appears tomorrow.</p>`
+      : `<div class="qfoot" style="justify-content:flex-end"><button type="button" class="btn" id="qd-check" ${hasPick(pick) ? '' : 'disabled'}>CHECK ANSWER</button></div>`}`;
+  $('#qotd').querySelectorAll('.opt:not(:disabled)').forEach(b => b.addEventListener('click', () => {
+    const o = +b.dataset.o;
+    if (q.type === 'multi') { const cur = new Set(state.pick || []); if (cur.has(o)) cur.delete(o); else { if (cur.size >= q.pick) cur.delete([...cur][0]); cur.add(o); } state.pick = [...cur]; }
+    else state.pick = o;
+    save(); renderQotd();
+    const again = document.querySelector(`#qotd .opt[data-o="${o}"]`); if (again) again.focus();
+  }));
+  const calc = $('#qd-calc');
+  if (calc && !done) calc.addEventListener('input', () => { state.pick = calc.value; save(); $('#qd-check').disabled = !hasPick(calc.value); });
+  const chk = $('#qd-check');
+  if (chk) chk.addEventListener('click', () => {
+    state.done = true; store.answered++; if (isCorrect(item, state.pick)) store.correct++; save(); renderQotd();
+  });
+}
+
+function mockPanel(k) {
+  const m = MOCKS[k], hist = store.mocks.filter(x => (x.kind || 'nce') === k).slice(-4).reverse();
+  return `<div class="mock-panel">
+    <div>
+      <p class="lead">${esc(m.lead)}</p>
+      <ul class="rules">
+        <li><span>Questions</span><span class="v">${mockCount(k)}, across all four domains</span></li>
+        <li><span>Time</span><span class="v">${m.mins} minutes</span></li>
+        <li><span>Going back</span><span class="v">Not allowed</span></li>
+        <li><span>Flagging for review</span><span class="v">Not allowed</span></li>
+        <li><span>Formats</span><span class="v">Single answer, select two, calculation</span></li>
+      </ul>
+      <button type="button" class="btn" data-start="${k}">START ${esc(m.label.toUpperCase())}</button>
+      <p class="note">${esc(m.note)}</p>
+    </div>
+    <div class="history">
+      <h3 class="col-head">Your Attempts</h3>
+      ${hist.length ? hist.map(x => `<div class="kv"><span class="k">${new Date(x.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}, ${new Date(x.at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</span><span class="v"${x.score < THRESHOLD ? ' style="color:var(--amber)"' : ''}>${x.score}%</span></div>`).join('')
+        : `<p class="note" style="padding-top:0">None yet. Scores are saved in this browser only.</p>`}
+    </div>
+  </div>`;
+}
+
+function renderQuestions(open) {
+  renderQotd();
+  const rows = [
+    { k: 'practice', label: 'Tutor mode', name: 'Practice Questions', meta: `${QS.length} questions · 5 sets` },
+    { k: 'see', label: 'Timed', name: 'Mock SEE', meta: `${mockCount('see')} questions · ${MOCKS.see.mins} min` },
+    { k: 'nce', label: 'Timed', name: 'Mock NCE', meta: `${mockCount('nce')} questions · ${MOCKS.nce.mins} min` }
+  ];
+  $('#q-list').innerHTML = rows.map(r => {
+    const isOpen = r.k === open;
+    let inner = '';
+    if (isOpen && r.k === 'practice') {
+      const sets = [{ k: 'gaps', name: 'Gap set', sub: 'Mixed questions from your weakest domains', n: QS.filter(q => q.dom === 'eq' || q.dom === 'sp').length }]
+        .concat(ORDER.map(k => ({ k, name: DOMAINS[k].name, sub: [...new Set(QS.filter(q => q.dom === k).map(q => q.topic))].join(', '), n: QS.filter(q => q.dom === k).length })));
+      inner = `<div class="secs">${sets.map(s => `<div class="srow"><a class="shit" href="#practice/${s.k}">
+        <span class="sname">${esc(s.name)}<small>${esc(s.sub)}</small></span><span class="dc">${Math.min(6, s.n)} questions</span><span class="go" aria-hidden="true">Start</span></a></div>`).join('')}
+        <p class="note">Tutor mode shows the answer and explanation after each question. Every item is written for Ether Education, not taken from a textbook or the NCE.</p></div>`;
+    } else if (isOpen) inner = `<div class="secs">${mockPanel(r.k)}</div>`;
+    return `<section class="drow${isOpen ? ' open' : ''}">
+      <a class="dhit" href="#questions${isOpen ? '' : '/' + r.k}" aria-expanded="${isOpen}">
+        <span class="dn">${r.label}</span><span class="dname">${r.name}</span><span class="dc">${r.meta}</span>${CHEV}
+      </a>${inner}</section>`;
   }).join('');
-  animateBars($('#view-questions'));
+  $('#q-list').querySelectorAll('[data-start]').forEach(b => b.addEventListener('click', () => startMock(b.dataset.start)));
 }
 
 /* ---------- Runner (practice and mock) ---------- */
@@ -1039,11 +1134,11 @@ function startPractice(key) {
   run = { mode: 'practice', key, label, items: shuffle(pool).slice(0, 6).map(prepare), i: 0, picks: [], locked: [], start: Date.now() };
   drawRun();
 }
-function startMock() {
-  const per = { bs: 2, eq: 3, gp: 2, sp: 3 };
+function startMock(kind) {
+  const m = MOCKS[kind] || MOCKS.nce, per = m.per;
   let items = [];
   ORDER.forEach(k => { items = items.concat(shuffle(QS.filter(q => q.dom === k)).slice(0, per[k])); });
-  run = { mode: 'mock', label: 'Mock NCE', items: shuffle(items).map(prepare), i: 0, picks: [], locked: [], start: Date.now(), limit: 15 * 60 };
+  run = { mode: 'mock', kind: MOCKS[kind] ? kind : 'nce', label: m.label, items: shuffle(items).map(prepare), i: 0, picks: [], locked: [], start: Date.now(), limit: m.mins * 60 };
   clearInterval(run.timer);
   run.timer = setInterval(tick, 1000);
   location.hash = '#mock/run';
@@ -1089,7 +1184,7 @@ function drawRun() {
   let primary, hint = '';
   if (mock) {
     primary = `<button type="button" class="btn" id="submit" ${hasPick(pick) ? '' : 'disabled'}>${last ? 'SUBMIT AND FINISH' : 'SUBMIT ANSWER'}</button>`;
-    hint = 'Submitting is final. Like the NCE, you cannot go back or flag a question.';
+    hint = run.kind === 'nce' ? 'Submitting is final. Like the NCE, you cannot go back or flag a question.' : 'Submitting is final. You cannot go back or flag a question.';
   } else if (!locked) {
     primary = `<button type="button" class="btn" id="check" ${hasPick(pick) ? '' : 'disabled'}>CHECK ANSWER</button>`;
   } else {
@@ -1105,7 +1200,7 @@ function drawRun() {
     <p class="instr">${instr}</p>
     ${body}
     ${explain}
-    <div class="qfoot">${mock ? `<span class="hint">${hint}</span>` : `<a class="all" href="#questions" style="padding-top:0">End set</a>`}${primary}</div>`;
+    <div class="qfoot">${mock ? `<span class="hint">${hint}</span>` : `<a class="all" href="#questions/practice" style="padding-top:0">End set</a>`}${primary}</div>`;
 
   root.querySelectorAll('.opt:not(:disabled)').forEach(b => b.addEventListener('click', () => {
     const o = +b.dataset.o;
@@ -1160,7 +1255,7 @@ function drawPracticeResults() {
     <div class="result-top" style="margin-top:28px"><span class="big">${c}<small>/${n}</small></span>
       <p>${c === n ? 'Every question right. Move on to another domain or take the mock.' : 'Open any missed question below to read the explanation again.'}</p></div>
     ${reviewList(run.items, run.picks)}
-    <div class="qfoot"><a class="all" href="#questions" style="padding-top:0">Back to questions</a><button type="button" class="btn" id="again">NEW SET</button></div>`;
+    <div class="qfoot"><a class="all" href="#questions/practice" style="padding-top:0">Back to practice</a><button type="button" class="btn" id="again">NEW SET</button></div>`;
   wireReview(root);
   $('#again').addEventListener('click', () => startPractice(run.key));
 }
@@ -1169,7 +1264,7 @@ function finishMock(timedOut) {
   stopRun();
   const n = run.items.length, c = run.items.filter((it, k) => isCorrect(it, run.picks[k])).length;
   store.answered += run.locked.filter(Boolean).length; store.correct += c;
-  store.mocks.push({ score: Math.round(c / n * 100), at: Date.now() }); save();
+  store.mocks.push({ kind: run.kind, score: Math.round(c / n * 100), at: Date.now() }); save();
   run.done = { c, n, timedOut, secs: Math.min(run.limit, Math.floor((Date.now() - run.start) / 1000)) };
   location.hash = '#mock/results';
 }
@@ -1177,41 +1272,17 @@ function drawMockResults() {
   const root = $('#run-root'), { c, n, timedOut, secs } = run.done;
   const by = ORDER.map(k => { const ks = run.items.map((it, j) => j).filter(j => run.items[j].q.dom === k); return [k, ks.filter(j => isCorrect(run.items[j], run.picks[j])).length, ks.length]; });
   root.innerHTML = `
-    <div class="qhead"><span class="k">MOCK NCE · RESULTS</span><span class="r">${timedOut ? 'Time ran out' : fmtTime(secs) + ' used of 15:00'}</span></div>
+    <div class="qhead"><span class="k">${esc(run.label.toUpperCase())} · RESULTS</span><span class="r">${timedOut ? 'Time ran out' : fmtTime(secs) + ' used of ' + fmtTime(run.limit)}</span></div>
     <div class="result-top" style="margin-top:28px"><span class="big">${c}<small>/${n}</small></span>
-      <p>A short sample, so treat this as practice, not a prediction. The NCE reports pass or fail, not a percentage.</p></div>
+      <p>A short sample, so treat this as practice, not a prediction.${run.kind === 'nce' ? ' The NCE reports pass or fail, not a percentage.' : ''}</p></div>
     <div style="margin:8px 0 28px">${by.map(([k, ok, t]) => {
       const pct = t ? Math.round(ok / t * 100) : 0, weak = pct < THRESHOLD;
       return `<div class="domain${weak ? ' weak' : ''}"><span class="name">${esc(DOMAINS[k].short)}</span><span class="score">${ok}/${t}</span><div class="bar"><i data-w="${pct}"></i></div></div>`;
     }).join('')}</div>
     <h2 class="col-head" style="padding-top:8px">Review</h2>
     ${reviewList(run.items, run.picks)}
-    <div class="qfoot"><a class="all" href="#home" style="padding-top:0">Back to home</a><a class="btn" href="#mock">DONE</a></div>`;
+    <div class="qfoot"><a class="all" href="#home" style="padding-top:0">Back to home</a><a class="btn" href="#questions/${run.kind}">DONE</a></div>`;
   wireReview(root); animateBars(root);
-}
-
-function renderMockIntro() {
-  const hist = store.mocks.slice(-4).reverse();
-  $('#view-mock').innerHTML = `
-    <section class="col">
-      <h1>Mock NCE</h1>
-      <p class="lead">A short timed sample that behaves like the real exam: one question at a time, and no feedback until the end.</p>
-      <ul class="rules">
-        <li><span>Questions</span><span class="v">10, across all four domains</span></li>
-        <li><span>Time</span><span class="v">15 minutes</span></li>
-        <li><span>Going back</span><span class="v">Not allowed</span></li>
-        <li><span>Flagging for review</span><span class="v">Not allowed</span></li>
-        <li><span>Formats</span><span class="v">Single answer, select two, calculation</span></li>
-      </ul>
-      <div><button type="button" class="btn" id="start-mock">START MOCK</button></div>
-      <p class="note">The real NCE is computer-adaptive: 100 to 170 questions in up to 3 hours. A full-length mock comes once the question bank is large enough.</p>
-    </section>
-    <section class="col history">
-      <h2 class="col-head">Your Mocks</h2>
-      ${hist.length ? hist.map(m => `<div class="kv"><span class="k">${new Date(m.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}, ${new Date(m.at).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</span><span class="v${m.score < THRESHOLD ? '" style="color:var(--amber)' : ''}">${m.score}%</span></div>`).join('')
-        : `<p class="note" style="padding-top:0">No mocks yet. Your scores will show here, saved in this browser only.</p>`}
-    </section>`;
-  $('#start-mock').addEventListener('click', startMock);
 }
 
 /* ---------- Profile ---------- */
@@ -1220,7 +1291,7 @@ function renderProfile() {
   const baseAns = 1284, baseCor = 847;
   const ans = baseAns + store.answered, cor = baseCor + store.correct;
   const finished = ALL_LESSONS.filter(isDone).length;
-  const lastMock = store.mocks.length ? store.mocks[store.mocks.length - 1].score + '%' : 'None yet';
+  const lm = store.mocks[store.mocks.length - 1], lastMock = lm ? `${MOCKS[lm.kind || 'nce'].label}, ${lm.score}%` : 'None yet';
   $('#prof-about').innerHTML = kv(PROFILE_ABOUT);
   $('#prof-record').innerHTML = kv([
     ['Readiness now', '68'], ['Questions answered', ans.toLocaleString()], ['Overall accuracy', Math.round(cor / ans * 100) + '%'],
@@ -1238,18 +1309,18 @@ function route() {
   const dl = daysLeft(); $('#days').textContent = dl; $('#prof-days').textContent = dl;
   // Leaving a mock in progress abandons it.
   if (run && run.mode === 'mock' && !run.done && !(a === 'mock' && b === 'run')) { stopRun(); run = null; }
-  const wasLessons = !document.getElementById('view-lessons').hidden;
-  if (!(a === 'lessons' && wasLessons)) window.scrollTo(0, 0);
+  const wasLessons = !document.getElementById('view-lessons').hidden, wasQ = !document.getElementById('view-questions').hidden;
+  if (!((a === 'lessons' && wasLessons) || (a === 'questions' && wasQ))) window.scrollTo(0, 0);
   switch (a) {
     case 'lessons': setNav('lessons'); renderLessons(b, c); show('lessons'); break;
     case 'lesson': setNav('lessons'); show('lesson'); renderLesson(b); break;
-    case 'questions': setNav('questions'); renderQuestions(); show('questions'); break;
+    case 'questions': setNav('questions'); renderQuestions(b); show('questions'); break;
     case 'practice': setNav('questions'); show('run'); startPractice(b); break;
     case 'mock':
-      setNav('mock');
+      setNav('questions');
       if (b === 'run' && run && run.mode === 'mock' && !run.done) { show('run'); drawRun(); }
       else if (b === 'results' && run && run.done) { show('run'); drawMockResults(); }
-      else { if (b) { history.replaceState(null, '', '#mock'); } renderMockIntro(); show('mock'); }
+      else { history.replaceState(null, '', '#questions/nce'); renderQuestions('nce'); show('questions'); }
       break;
     case 'profile': setNav('profile'); renderProfile(); show('profile'); break;
     default: setNav('home'); renderHome(); show('home');
